@@ -1,13 +1,13 @@
 // H task
 
-// H task
 function getPositive(arr: number[]): string {
   return arr
     .filter((num: number): boolean => Number.isInteger(num) && num > 0)
     .map((num: number): string => num.toString())
-    .join("");
+    .join(',');
 }
-console.log(getPositive([1, -4, 2]));
+console.log(`"${getPositive([7, -18, 9])}"`);
+
 
 
 
