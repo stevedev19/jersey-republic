@@ -1,5 +1,19 @@
+// H task
+
+// H task
+function getPositive(arr: number[]): string {
+  return arr
+    .filter((num: number): boolean => Number.isInteger(num) && num > 0)
+    .map((num: number): string => num.toString())
+    .join("");
+}
+console.log(getPositive([1, -4, 2]));
+
+
+
 // G task
 
+/*
 function getHighestIndex(arr: number[]): number{
     if(arr.length === 0) return -1
 
@@ -17,3 +31,4 @@ function getHighestIndex(arr: number[]): number{
 }
 
 console.log(getHighestIndex([5, 21, 12, 21, 8]))
+*/
