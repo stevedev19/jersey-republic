@@ -1,5 +1,16 @@
+// H-2 task
+
+function getDigits(str: string): string {
+  return str
+    .split("")
+    .filter(char => /\d/.test(char)) 
+    .join("");
+}
+console.log(`"${getDigits("m29i1t")}"`);
+
 // H task
 
+/*
 function getPositive(arr: number[]): string {
   return arr
     .filter((num: number): boolean => Number.isInteger(num) && num > 0)
@@ -7,6 +18,7 @@ function getPositive(arr: number[]): string {
     .join(',');
 }
 console.log(`"${getPositive([7, -18, 9])}"`);
+*/
 
 
 
