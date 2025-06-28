@@ -1,3 +1,13 @@
+/* Project Standards:
+- Logging standards
+- Naming standards:
+function, method, variable = CAMEL
+class = PASCAL
+folder = KEBAB
+CSS => SNAKE
+- Error handling
+*/
+
 // H-2 task
 
 function getDigits(str: string): string {
