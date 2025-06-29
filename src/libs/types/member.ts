@@ -1,6 +1,7 @@
 import { MemberStatus, MemberType } from "../enums/member.enum";
 
 export interface Member {
+    
     memberType: MemberType;
     memberStatus: MemberStatus;
     memberNick: String;

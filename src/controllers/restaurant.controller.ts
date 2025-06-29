@@ -46,13 +46,15 @@ import { MemberType } from "../libs/enums/member.enum";
    try {
     console.log("processSignup");
    
+    console.log("req.body:", req.body);
     const newMember: MemberInput = req.body;
     newMember.memberType = MemberType.RESTAURANT;
+    console.log("newMember:", newMember);
 
     const memberService = new MemberService();
     const result = await memberService.processSignup(newMember);
     
-    res.send("DONE");
+    res.send(result);
   } catch (err) {
     console.log("Error, processSignup", err);
     res.send(err);
