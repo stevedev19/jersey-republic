@@ -8,6 +8,16 @@ CSS => SNAKE
 - Error handling
 */
 
+/*
+Traditional API
+Rest API
+GraphQL API
+...
+*/
+
+
+
+
 // H-2 task
 
 function getDigits(str: string): string {
