@@ -3,7 +3,7 @@ import { Member, MemberInput } from "../libs/types/member";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import { MemberType } from "../libs/enums/member.enum";
 
-class MemeberService {
+class MemberService {
     private readonly memberModel;
 
     constructor() {
@@ -26,4 +26,4 @@ class MemeberService {
   }
 }
 
-export default MemeberService;
+export default MemberService;

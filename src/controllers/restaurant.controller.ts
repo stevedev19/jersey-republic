@@ -55,6 +55,7 @@ import { MemberType } from "../libs/enums/member.enum";
     res.send("DONE");
   } catch (err) {
     console.log("Error, processSignup", err);
+    res.send(err);
   }
  };
  export default restaurantController; 
