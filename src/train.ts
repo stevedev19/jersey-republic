@@ -1,3 +1,11 @@
+/*
+Traditional Frontend Development => BSSR  (Admin)=> EJS
+Modern Frontend Development      => SPA (User application) => REACT
+*/
+
+
+
+
 // I task
 
 function majorityElement(arr:number[]):number|null{
