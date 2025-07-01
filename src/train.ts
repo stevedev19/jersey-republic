@@ -1,3 +1,18 @@
+// I task
+
+function majorityElement(arr:number[]):number|null{
+    const countMap = new Map<number, number>();
+
+    for (let num of arr){
+        countMap.set(num, (countMap.get(num)||0) + 1);
+    }
+
+    return [...countMap.entries()].reduce((a,b)=>(b[1]>a[1]? b : a))[0]
+}
+console.log(majorityElement([1, 2, 3, 4, 5, 4, 3, 4]))
+
+
+
 /* Project Standards:
 - Logging standards
 - Naming standards:
@@ -20,6 +35,7 @@ GraphQL API
 
 // H-2 task
 
+/*
 function getDigits(str: string): string {
   return str
     .split("")
@@ -27,6 +43,7 @@ function getDigits(str: string): string {
     .join("");
 }
 console.log(`"${getDigits("m29i1t")}"`);
+*/
 
 // H task
 
