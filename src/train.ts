@@ -1,3 +1,21 @@
+// J task
+
+function findLongestWord(sentence: string): string {
+    const words = sentence.split(" ");
+    let longestWord = "";
+
+    for (let word of words) {
+        if (word.length > longestWord.length){
+            longestWord = word;
+        }
+    }
+    return longestWord;
+}
+console.log(findLongestWord("I come from Uzbekistan!"));
+
+
+
+
 /*
 Traditional Frontend Development => BSSR  (Admin)=> EJS
 Modern Frontend Development      => SPA (User application) => REACT
@@ -8,6 +26,7 @@ Modern Frontend Development      => SPA (User application) => REACT
 
 // I task
 
+/*
 function majorityElement(arr:number[]):number|null{
     const countMap = new Map<number, number>();
 
@@ -18,6 +37,7 @@ function majorityElement(arr:number[]):number|null{
     return [...countMap.entries()].reduce((a,b)=>(b[1]>a[1]? b : a))[0]
 }
 console.log(majorityElement([1, 2, 3, 4, 5, 4, 3, 4]))
+*/
 
 
 
