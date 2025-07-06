@@ -1,5 +1,16 @@
+// K task
+
+function countVowels(s: string): number {
+    const vowels = "aeiouAEIOU";
+    return s.split("").filter(char=>vowels.includes(char)).length;
+}
+console.log(countVowels("string"));
+
+
+
 // J task
 
+/*
 function findLongestWord(sentence: string): string {
     const words = sentence.split(" ");
     let longestWord = "";
@@ -12,6 +23,7 @@ function findLongestWord(sentence: string): string {
     return longestWord;
 }
 console.log(findLongestWord("I come from Uzbekistan!"));
+*/
 
 
 
