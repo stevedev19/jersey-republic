@@ -1,11 +1,22 @@
+// L task
+
+function reverseSentence(sentence:string):string{
+return sentence
+.split(" ")
+.map(word=>word.split("").reverse().join(""))
+.join(" ");
+}
+console.log(reverseSentence("we like coding"));
+
 // K task
 
+/* 
 function countVowels(s: string): number {
     const vowels = "aeiouAEIOU";
     return s.split("").filter(char=>vowels.includes(char)).length;
 }
 console.log(countVowels("string"));
-
+*/
 
 
 // J task
