@@ -21,8 +21,8 @@ const productController: T = {};
  productController.createNewProduct = async (req: Request, res: Response) => {
    try {
     console.log("createNewProduct");
-   
-  } catch (err) {
+    res.send("DONE!");
+   } catch (err) {
     console.log("Error, createNewProduct", err); 
     res.status(Errors.standard.code).json(Errors.standard)
    // res.json({});
