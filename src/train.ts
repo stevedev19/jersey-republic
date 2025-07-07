@@ -1,3 +1,9 @@
+/* Validations:
+Frontend validation
+Backend validation
+Database validation
+*/ 
+
 // L task
 
 function reverseSentence(sentence:string):string{
