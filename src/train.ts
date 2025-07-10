@@ -1,3 +1,14 @@
+// M task
+
+function getSquareNumbers(numbers: number[]): {
+    number: number , square: number }[]{
+    return numbers.map(num=>({
+        number: num,
+        square: num * num
+    }))
+}
+console.log(getSquareNumbers([1,2, 3]))
+
 /* Validations:
 Frontend validation
 Backend validation
@@ -6,6 +17,7 @@ Database validation
 
 // L task
 
+/*
 function reverseSentence(sentence:string):string{
 return sentence
 .split(" ")
@@ -13,6 +25,7 @@ return sentence
 .join(" ");
 }
 console.log(reverseSentence("we like coding"));
+*/
 
 // K task
 
