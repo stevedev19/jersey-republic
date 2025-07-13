@@ -1,5 +1,15 @@
+function palindromCheck(word: string): boolean {
+  const reversed = word.split('').reverse().join('');
+  return word === reversed;
+}
+console.log(palindromCheck("aka"));  
+console.log(palindromCheck("uka"));   
+
+
+
 // M task
 
+/*
 function getSquareNumbers(numbers: number[]): {
     number: number , square: number }[]{
     return numbers.map(num=>({
@@ -8,6 +18,7 @@ function getSquareNumbers(numbers: number[]): {
     }))
 }
 console.log(getSquareNumbers([1,2, 3]))
+*/
 
 /* Validations:
 Frontend validation
