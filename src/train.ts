@@ -1,12 +1,29 @@
+// O task
+
+function calculateSumOfNumbers(arr: any[]): number {
+    let sum = 0;
+
+    for (const item of arr) {
+        if(typeof item === "number"){
+            sum += item;
+        }
+    }
+
+    return sum;
+}
+console.log(calculateSumOfNumbers([10, "10", {son: 10}, true, 35]));
+
+
 // N task
 
+/*
 function palindromCheck(word: string): boolean {
   const reversed = word.split('').reverse().join('');
   return word === reversed;
 }
 console.log(palindromCheck("aka"));  
 console.log(palindromCheck("uka"));   
-
+*/
 
 
 // M task
