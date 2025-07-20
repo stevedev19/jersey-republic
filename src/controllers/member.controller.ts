@@ -29,9 +29,9 @@ memberController.signup = async (req: Request, res: Response) => {
 memberController.login = async (req: Request, res: Response) => {
   try {
     console.log("login");
-    const input: LoginInput = req.body;
-    const  result = await memberService.login(input);
-    
+    const input: LoginInput = req.body,
+     result = await memberService.login(input);
+
     // original 26.46 result = await memberService.login(input);
 
     res.json({ member: result });

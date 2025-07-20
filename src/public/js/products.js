@@ -25,7 +25,7 @@ $("#cancel-btn").on("click", ()=>{
 
 $(".new-product-status").on("change", async function (e){
     const id = e.target.id,
-    productStatus = $(`#${id}.new-product-status`).val();
+      productStatus = $(`#${id}.new-product-status`).val();
     
      try {
      const response = await axios.post(`/admin/product/${id}`, {productStatus: productStatus});
