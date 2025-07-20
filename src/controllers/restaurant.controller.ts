@@ -73,14 +73,16 @@ req.session.save(function() {
 ) => {
    try {
     console.log("processLogin");
-    
+    console.log("body:", req.body);
     const input: LoginInput = req.body;
+
     const result =  await memberService.processLogin(input);
 
 req.session.member = result;
 req.session.save(function() {
   res.redirect("/admin/product/all");
    }); 
+   
   } catch (err) {
     console.log("Error, processLogin", err);
     const message = 
