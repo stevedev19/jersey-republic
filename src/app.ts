@@ -30,13 +30,19 @@ app.use(
   session({
     secret: String(process.env.SESSION_SECRET),
     cookie: {
-      maxAge: 1000 * 10 * 6, // 6hrs
+      maxAge: 1000 * 60 * 60 * 24, //1 day //1000 * 10 * 6, // 6hrs
     },
     store: store,
-    resave: true,
-    saveUninitialized: true
+    resave: false, 
+    saveUninitialized: false
   })
 );
+
+/*
+originally
+resave: true, 
+saveUninitialized: true
+*/
 
 app.use(function(req, res, next) {
   const sessionInstance = req.session as T;
