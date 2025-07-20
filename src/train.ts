@@ -1,5 +1,14 @@
+// P task
+
+function objectToArray(obj: Record<string, any>): [string, any][]{
+    return Object.keys(obj).map(key=>[key, obj[key]]);
+}
+
+console.log(objectToArray({ a: 10, b:20}));
+
 // O task
 
+/*
 function calculateSumOfNumbers(arr: any[]): number {
     let sum = 0;
 
@@ -12,6 +21,7 @@ function calculateSumOfNumbers(arr: any[]): number {
     return sum;
 }
 console.log(calculateSumOfNumbers([10, "10", {son: 10}, true, 35]));
+*/
 
 
 // N task
