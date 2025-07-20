@@ -6,7 +6,6 @@ import makeUploader from "./libs/utils/uploader";
 
 /* Restaurant */
 routerAdmin.get("/", restaurantController.goHome);
-
 routerAdmin
   .get("/login", restaurantController.getLogin)
   .post("/login", restaurantController.processLogin);
