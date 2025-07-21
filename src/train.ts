@@ -1,10 +1,21 @@
+// Q task
+
+function hasProperty(obj: object, key: string): boolean {
+    return Object.keys(obj).includes(key);
+}
+
+console.log(hasProperty({name: "BMW", model: "M3"}, "model"));
+console.log(hasProperty({name: "BMW", model: "M3"}, "year"));
+
 // P task
 
+/*
 function objectToArray(obj: Record<string, any>): [string, any][]{
     return Object.keys(obj).map(key=>[key, obj[key]]);
 }
 
 console.log(objectToArray({ a: 10, b:20}));
+*/
 
 // O task
 

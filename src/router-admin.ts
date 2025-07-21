@@ -40,7 +40,8 @@ routerAdmin.post(
 );
 /* user */
 
-routerAdmin.get("/user/all", restaurantController.verifyRestaurant, restaurantController.getUsers);
+routerAdmin.get("/user/all", restaurantController.verifyRestaurant, 
+restaurantController.getUsers);
 routerAdmin.post("/user/edit", restaurantController.updateChosenUser);
 
 
