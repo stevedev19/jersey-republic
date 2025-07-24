@@ -1,11 +1,22 @@
+// R task
+
+function calculate(expression: string): number{
+    const [a, b] = expression.split("+").map(Number);
+    return a + b;
+}
+
+console.log(calculate("45+55"));
+
 // Q task
 
+/*
 function hasProperty(obj: object, key: string): boolean {
     return Object.keys(obj).includes(key);
 }
 
 console.log(hasProperty({name: "BMW", model: "M3"}, "model"));
 console.log(hasProperty({name: "BMW", model: "M3"}, "year"));
+*/
 
 // P task
 
