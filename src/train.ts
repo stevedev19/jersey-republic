@@ -1,11 +1,23 @@
+// S task
+
+function missingNumber(arr: number[]): number{
+    const n : number = arr.length;
+    const expectedSum: number = (n * (n+1)) /2;
+    const actualSum: number = arr.reduce((acc, num)=> acc + num, 0);
+    return expectedSum - actualSum;
+}
+console.log(missingNumber([3,0,1]));
+
 // R task
 
+/*
 function calculate(expression: string): number{
     const [a, b] = expression.split("+").map(Number);
     return a + b;
 }
 
 console.log(calculate("45+55"));
+*/
 
 // Q task
 
