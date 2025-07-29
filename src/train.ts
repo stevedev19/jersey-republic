@@ -1,5 +1,14 @@
+// T task
+
+function mergeSortedArrays(arr1: number[], arr2: number[]): number[]{
+    const merged = [...arr1, ...arr2];
+    return merged.sort((a, b)=> a-b);
+}
+console.log(mergeSortedArrays([0, 3 , 4, 31], [4, 6, 30]));
+
 // S task
 
+/*
 function missingNumber(arr: number[]): number{
     const n : number = arr.length;
     const expectedSum: number = (n * (n+1)) /2;
@@ -7,6 +16,7 @@ function missingNumber(arr: number[]): number{
     return expectedSum - actualSum;
 }
 console.log(missingNumber([3,0,1]));
+*/
 
 // R task
 
