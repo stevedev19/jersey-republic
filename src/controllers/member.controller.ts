@@ -3,26 +3,25 @@ import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { LoginInput, Member, MemberInput } from "../libs/types/member";
 import Errors from "../libs/Errors";
+import AuthService from "../schema/Auth.service";
 
 const memberService = new MemberService();
+const authService = new AuthService();
 
 const memberController: T = {}; 
-
 memberController.signup = async (req: Request, res: Response) => {
   try {
     console.log("signup");
-    const input: MemberInput = req.body;
-    const result: Member = await memberService.signup(input);
+    const input: MemberInput = req.body,
+      result: Member = await memberService.signup(input);
+    const token = await authService.createToken(result);
+    console.log("token:", token);
 
-    res.json({ success: true, code: 200, member: result });
-
+    res.json({ member: result });
   } catch (err) {
     console.log("Error, signup", err); 
-    if (err instanceof Errors) {
-      res.status(err.code).json({ success: false, code: err.code, message: err.message });
-    } else {
-      res.status(Errors.standard.code).json({ success: false, code: Errors.standard.code, message: Errors.standard.message });
-    }
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
 
@@ -30,9 +29,10 @@ memberController.login = async (req: Request, res: Response) => {
   try {
     console.log("login");
     const input: LoginInput = req.body,
-     result = await memberService.login(input);
-
-    // original 26.46 result = await memberService.login(input);
+     result = await memberService.login(input),
+     token = await authService.createToken(result);
+     console.log("token =>", token);
+     // TOKENS AUTHENTICATION
 
     res.json({ member: result });
   } catch (err) {

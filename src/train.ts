@@ -1,4 +1,8 @@
+
+
 // U task
+
+/*
 function sumOdds(n: number):number{
 let count = 0;
 
@@ -9,6 +13,7 @@ return count;
 
 }
 console.log(sumOdds(9));
+*/
 
 // T task
 
