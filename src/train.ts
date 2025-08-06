@@ -1,4 +1,14 @@
+// V task
 
+function countChars(str: string): Record<string, number>{
+    const result: Record<string, number> ={};
+
+    for (const char of str) {
+        result[char] = (result[char] || 0) + 1;
+    }
+    return result;
+}
+console.log(countChars("gambaree"))
 
 // U task
 
