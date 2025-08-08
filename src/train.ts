@@ -1,5 +1,17 @@
+// W task
+
+function chunkArray<T>(arr: T[], size: number): T[][]{
+    const result: T[][] = [];
+    for (let i = 0; i < arr.length; i += size) {
+        result.push(arr.slice(i, i + size));
+    }
+    return result;
+}
+console.log(chunkArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3))
+
 // V task
 
+/*
 function countChars(str: string): Record<string, number>{
     const result: Record<string, number> ={};
 
@@ -9,6 +21,7 @@ function countChars(str: string): Record<string, number>{
     return result;
 }
 console.log(countChars("gambaree"))
+*/
 
 // U task
 
