@@ -3,7 +3,7 @@ import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { ExtendedRequest, LoginInput, Member, MemberInput, MemberUpdateInput } from "../libs/types/member";
 import Errors, { HttpCode, Message } from "../libs/Errors";
-import AuthService from "../schema/Auth.service";
+import AuthService from "../models/Auth.service";
 import { AUTH_TIMER } from "../libs/config";
 
 const memberService = new MemberService();
