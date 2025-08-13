@@ -5,19 +5,18 @@ import { Session } from "express-session";
 
 
 export interface Member {
-    _id(_id: any): unknown;
-    
-    memberType: MemberType;
-    memberStatus: MemberStatus;
-    memberNick: String;
-    memberPhone: String;
-    memberPassword?: String;
-    memberAddress?: String;
-    memberDesc?: String;
-    memberImage?: String;
-    memberPoints: number;
-    createdAt: Date;
-    updatedAt: Date;
+_id: ObjectId;
+memberType:MemberType;
+memberStatus:MemberStatus;
+memberNick: string;
+memberPhone:string;
+memberPassword?: string;
+memberAddress?: string;
+memberDesc?: string;
+memberImage?: string;
+memberPoints: number;
+createdAt:Date;
+updatedAt:Date;
 }
 
 export interface MemberInput {
