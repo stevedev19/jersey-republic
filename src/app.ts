@@ -13,7 +13,7 @@ import { T } from "./libs/types/common";
 const MongoDBStore = ConnectMongoDB(session);
 const store = new MongoDBStore({
     uri: String(process.env.MONGO_URL),
-    collection: 'session',
+    collection: 'sessions',
 });
 
 /** 1-ENTRANCE **/
