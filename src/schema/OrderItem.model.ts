@@ -5,17 +5,17 @@ const orderItemSchema = new Schema({
         type: Number,
         required: true
     },
-    itemPrice:{
+    itemPrice: {
        type: Number,
        required: true
     },
 
-    orderId:{
+    orderId: {
         type: Schema.Types.ObjectId,
         ref: "Order"
     },
 
-    productId:{
+    productId: {
         type: Schema.Types.ObjectId,
         ref: "Product",
     },
