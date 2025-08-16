@@ -103,7 +103,7 @@ public async getMemberDetail(member: Member): Promise<Member>{
   return result;
   }
 
-  public async addUserPoint(member: Member,point: number ): Promise<Member>{
+  public async addUserPoint(member: Member,point: number ): Promise<Member> {
   const memberId = shapeIntoMongooseObjectId(member._id);
 
   return await this.memberModel
