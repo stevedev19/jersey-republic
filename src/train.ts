@@ -1,9 +1,21 @@
+// ZD task
+
+function changeNumberInArray(index: number, arr: number[], newValue: number): number[]{
+        if(index >= 0 && index < arr.length){
+            arr[index] = newValue;
+     }
+        return arr;
+    }
+    console.log(changeNumberInArray(1,[1, 3, 7, 2], 2));
+
 // ZC task
 
+/*
 function celsiusToFahrenheit(num: number): number {
   return (num * 9) / 5 + 32;
 }
 console.log(celsiusToFahrenheit(0));
+*/
 
 // ZA task
 
