@@ -1,5 +1,20 @@
+// ZE task
+
+function removeDuplicate(str: string): string{
+    let result = '';
+    for (let char of str){
+        if(!result.includes(char)){
+            result += char;
+
+        }
+    }
+    return result;
+   }
+console.log(removeDuplicate('string'));
+
 // ZD task
 
+/*
 function changeNumberInArray(index: number, arr: number[], newValue: number): number[]{
         if(index >= 0 && index < arr.length){
             arr[index] = newValue;
@@ -7,6 +22,7 @@ function changeNumberInArray(index: number, arr: number[], newValue: number): nu
         return arr;
     }
     console.log(changeNumberInArray(1,[1, 3, 7, 2], 2));
+    */
 
 // ZC task
 
