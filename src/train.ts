@@ -1,5 +1,18 @@
+ //ZG task
+
+ function toSnakeCase (input: string):string{
+    if(typeof input !== 'string') return '';
+    return input 
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '_');
+  }
+   
+  console.log(toSnakeCase('name should be a string'))
+
 // ZF task
 
+  /*
   function capitalizeWords(sentence: string): string {
     return sentence 
     .split(' ')
@@ -12,6 +25,7 @@
     .join(' ');
    }
    console.log(capitalizeWords('name should be a string'))
+   */
 
 // ZE task
 
