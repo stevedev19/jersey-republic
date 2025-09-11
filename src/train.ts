@@ -1,6 +1,19 @@
+ // ZH task
+
+  function findDisappearedNumbers(arr: number[]): number[]{
+   const max = Math.max(...arr);
+   const full = new Set(Array.from({length: max}, (_, i)=>i + 1));
+   for(const num of arr){
+    full.delete(num)
+   }
+   return Array.from(full)
+  }
+
+  console.log(findDisappearedNumbers([1, 3, 4, 7]))
+
  //ZG task
 
- function toSnakeCase (input: string):string{
+ /*function toSnakeCase (input: string):string{
     if(typeof input !== 'string') return '';
     return input 
     .trim()
@@ -8,7 +21,7 @@
     .replace(/\s+/g, '_');
   }
    
-  console.log(toSnakeCase('name should be a string'))
+  console.log(toSnakeCase('name should be a string'))*/
 
 // ZF task
 
