@@ -1,5 +1,25 @@
+ // ZI task
+
+  function delayHelloWorld(): Promise<string>{
+    return new Promise((resolve)=>{
+        setTimeout(()=>{
+            resolve("Hello World");
+        
+        }, 3000)
+    });
+  }
+
+  async function showHelloWorld(){
+    const result = await delayHelloWorld()
+    console.log(result)
+  }
+
+  showHelloWorld();
+
+ 
  // ZH task
 
+  /*
   function findDisappearedNumbers(arr: number[]): number[]{
    const max = Math.max(...arr);
    const full = new Set(Array.from({length: max}, (_, i)=>i + 1));
@@ -10,8 +30,9 @@
   }
 
   console.log(findDisappearedNumbers([1, 3, 4, 7]))
+  */
 
- //ZG task
+ // ZG task
 
  /*function toSnakeCase (input: string):string{
     if(typeof input !== 'string') return '';
