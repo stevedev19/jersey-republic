@@ -27,11 +27,12 @@ class OrderService {
     }, 0);
     const delivery= amount < 100 ? 5 : 0;
     try{
-     const newOrder: Order = await this.orderModel.create({
+     const newOrderDoc = await this.orderModel.create({
         orderTotal: amount + delivery,
         orderDelivery: delivery,
         memberId: memberId,
-     })
+     });
+     const newOrder = newOrderDoc.toObject() as Order;
      const orderId = newOrder._id;
      console.log("orderId:", orderId);
      await this.recordOrderItems(orderId, input);
@@ -109,7 +110,7 @@ if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 if(orderStatus === OrderStatus.PROCESS) {
     await this.memberService.addUserPoint(member, 1);
 }
-  return result;
+  return result.toObject() as Order;
    }
 }
 

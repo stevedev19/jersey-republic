@@ -45,7 +45,7 @@ const result = await this.productModel
 .exec();
 if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-return result;
+return result as unknown as Product[];
 }
 
 
@@ -89,7 +89,7 @@ if(!existView) {
        .exec();
   }
 }
-return result;
+return result as unknown as Product;
 
 
     //Increase Target View
@@ -103,12 +103,12 @@ public async getAllProducts(): Promise<Product[]> {
    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
    console.log("result:", result);
-   return result;
+   return result as unknown as Product[];
 }
 
 public async createNewProduct(input: ProductInput): Promise<Product> {
     try {
-       return await this.productModel.create(input);
+       return await this.productModel.create(input) as unknown as Product;
       } catch (err) {
       console.error("Error, model: createNewProduct:", err )  
         throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
@@ -125,7 +125,7 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
    .exec();
    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 
-   return result;
+   return result as unknown as Product;
   }
 }
 

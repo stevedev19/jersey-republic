@@ -27,7 +27,7 @@ class MemberService {
     .exec();
     if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-    return result;
+    return result as unknown as Member;
   }
 
 public async signup(input: MemberInput): Promise<Member> {
@@ -38,7 +38,7 @@ input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
   try {   
     const result = await this.memberModel.create(input);
     result.memberPassword = "";
-     return result.toJSON();
+     return result.toJSON() as unknown as Member;
     } catch (err) {
       console.error("Error, model:signup", err);
       throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
@@ -67,14 +67,14 @@ if (!isMatch) {
    throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
 }
  
-return await this.memberModel.findById(member._id).lean().exec();
+return await this.memberModel.findById(member._id).lean().exec() as unknown as Member;
 }
 
 public async getMemberDetail(member: Member): Promise<Member>{
   const memberId = shapeIntoMongooseObjectId(member._id);
   const result = await this.memberModel.findOne({_id:memberId, memberStatus: MemberStatus.ACTIVE}).exec();
   if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND)
-  return result;
+  return result as unknown as Member;
   }
 
  public async updateMember(
@@ -87,7 +87,7 @@ public async getMemberDetail(member: Member): Promise<Member>{
   .exec();
   if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED)
 
-    return result;
+    return result as unknown as Member;
   }
 
   public async getTopUsers(): Promise<Member[]> {
@@ -100,7 +100,7 @@ public async getMemberDetail(member: Member): Promise<Member>{
     .exec();
   // shart emas bu yerda    if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
   
-  return result;
+  return result as unknown as Member[];
   }
 
   public async addUserPoint(member: Member,point: number ): Promise<Member> {
@@ -115,7 +115,7 @@ public async getMemberDetail(member: Member): Promise<Member>{
        {$inc: {memberPoints: point}}, 
        {new: true}
       )
-       .exec()
+       .exec() as unknown as Member
   }
 
 /** SSR */
@@ -132,7 +132,7 @@ public async getMemberDetail(member: Member): Promise<Member>{
         try {   
         const result = await this.memberModel.create(input);
         result.memberPassword = "";
-        return result;
+        return result as unknown as Member;
     } catch (err) {
       throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
     }
@@ -160,7 +160,7 @@ if (!isMatch) {
    throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
 }
  
-return await this.memberModel.findById(member._id).exec();
+return await this.memberModel.findById(member._id).exec() as unknown as Member;
   }
 
   public async getUsers(): Promise<Member[]> {
@@ -169,7 +169,7 @@ return await this.memberModel.findById(member._id).exec();
   .exec();
   if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
   
-  return result;
+  return result as unknown as Member[];
   }
 
   public async updateChosenUser(input: MemberUpdateInput): Promise<Member> {
@@ -179,7 +179,7 @@ return await this.memberModel.findById(member._id).exec();
     .exec();
     if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
     
-    return result;
+    return result as unknown as Member;
     }
 }
  
