@@ -1,6 +1,21 @@
+ // ZJ task
+
+  function reduceNestedArray(arr: any[]):number {
+    return arr.reduce((sum, item)=>{
+        if(Array.isArray(item)){
+            return sum + reduceNestedArray(item);
+        }else if(typeof item === "number"){
+            return sum + item;
+        }
+    }, 0);
+  }
+
+  console.log(reduceNestedArray([1, [1,2,[4]]]))
+ 
  // ZI task
 
-  function delayHelloWorld(): Promise<string>{
+ /* 
+ function delayHelloWorld(): Promise<string>{
     return new Promise((resolve)=>{
         setTimeout(()=>{
             resolve("Hello World");
@@ -15,6 +30,7 @@
   }
 
   showHelloWorld();
+  */
 
  
  // ZH task
