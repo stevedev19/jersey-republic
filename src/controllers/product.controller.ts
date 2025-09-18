@@ -20,9 +20,9 @@ const productController: T = {};
     console.log("getProducts");
     const {page, limit, order, productCollection, search} = req.query;
     const inquiry: ProductInquiry = {
-      order: String(order),
-      page: Number(page),
-      limit: Number(limit),
+      order: String(order) || "createdAt",
+      page: Number(page) || 1,
+      limit: Number(limit) || 10,
     };
     if(productCollection) {
       inquiry.productCollection = productCollection as ProductCollection;

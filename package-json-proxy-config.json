@@ -1,0 +1,20 @@
+// Add this to your frontend/package.json
+// This allows you to use relative URLs in development
+
+{
+  "name": "your-frontend-app",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:3003",
+  "dependencies": {
+    // ... your existing dependencies
+  },
+  "scripts": {
+    // ... your existing scripts
+  }
+}
+
+// With this proxy configuration, you can modify the API service to use relative URLs:
+// const API_BASE_URL = process.env.NODE_ENV === 'production' 
+//   ? 'https://your-production-api.com' 
+//   : ''; // Empty string uses the proxy

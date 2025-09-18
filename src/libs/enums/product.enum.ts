@@ -4,7 +4,10 @@ export enum ProductSize{
     M = "M",
     L = "L",
     XL = "XL",
-    XXL = "XXL"
+    XXL = "XXL",
+    NORMAL = "NORMAL",
+    LARGE = "LARGE",
+    SMALL = "SMALL"
 }
 
 export enum ProductVolume{
@@ -12,7 +15,11 @@ export enum ProductVolume{
     AWAY = "AWAY", 
     THIRD = "THIRD",
     TRAINING = "TRAINING",
-    SPECIAL = "SPECIAL"
+    SPECIAL = "SPECIAL",
+    VOLUME_1 = "1",
+    VOLUME_1_2 = "1.2",
+    VOLUME_0_5 = "0.5",
+    VOLUME_2 = "2"
 }
 
 export enum ProductStatus {
@@ -31,4 +38,6 @@ export enum ProductCollection {
     NATIONAL_TEAMS = "NATIONAL_TEAMS",
     RETRO = "RETRO",
     OTHER = "OTHER",
+    DISH = "DISH",
+    DRINK = "DRINK"
 }
