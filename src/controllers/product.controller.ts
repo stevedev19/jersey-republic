@@ -83,7 +83,9 @@ productController.getProduct = async (req: ExtendedRequest, res: Response) =>{
 
       const data: ProductInput = req.body;
       data.productImages = req.files?.map((ele) => {
-          return ele.path.replace(/\\/g, "/");
+          const path = ele.path.replace(/\\/g, "/");
+          // Ensure the path starts with a slash for proper URL construction
+          return path.startsWith('/') ? path : `/${path}`;
       });
 
       await productService.createNewProduct(data);
