@@ -53,4 +53,11 @@ router.post(
     orderController.updateOrder 
 );
 
+/** Frontend API Routes **/
+router.get("/api/products", productController.getProducts);
+router.get("/api/products/:id",
+    memberController.retrieveAuth,
+    productController.getProduct
+);
+
 export default router;
