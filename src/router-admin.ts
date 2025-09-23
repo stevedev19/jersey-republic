@@ -48,6 +48,8 @@ routerAdmin.delete(
 routerAdmin.get("/user/all", restaurantController.verifyRestaurant, 
 restaurantController.getUsers);
 routerAdmin.post("/user/edit", restaurantController.updateChosenUser);
+routerAdmin.delete("/user/:id", restaurantController.verifyRestaurant, 
+restaurantController.deleteChosenUser);
 
 
 export default routerAdmin;

@@ -169,7 +169,7 @@ class UsersManager {
     });
   }
 
-  handleStatusChange(selectElement) {
+  async handleStatusChange(selectElement) {
     const userId = selectElement.id;
     const newStatus = selectElement.value;
     const row = selectElement.closest('.user-row');
@@ -178,27 +178,61 @@ class UsersManager {
     selectElement.disabled = true;
     selectElement.style.opacity = '0.6';
     
-    // Simulate API call
-    setTimeout(() => {
-      // Update local data
-      const user = this.users.find(u => u.id === userId);
-      if (user) {
-        user.status = newStatus;
+    try {
+      // Make actual API call to update user status
+      const response = await fetch('/admin/user/edit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          _id: userId,
+          memberStatus: newStatus
+        })
+      });
+
+      if (response.ok) {
+        // Update local data
+        const user = this.users.find(u => u.id === userId);
+        if (user) {
+          user.status = newStatus;
+        }
+        
+        // Update UI
+        selectElement.disabled = false;
+        selectElement.style.opacity = '1';
+        
+        // Add success animation
+        row.style.background = 'rgba(0, 255, 0, 0.1)';
+        setTimeout(() => {
+          row.style.background = '';
+        }, 1000);
+        
+        this.updateStats();
+        this.showNotification(`User status updated to ${newStatus}`, 'success');
+        
+        // Reload page after successful status change to show updated data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        // Revert the select value on error
+        selectElement.value = selectElement.dataset.previousValue || 'ACTIVE';
+        selectElement.disabled = false;
+        selectElement.style.opacity = '1';
+        
+        const errorData = await response.json();
+        this.showNotification(`Failed to update status: ${errorData.message || 'Unknown error'}`, 'error');
       }
-      
-      // Update UI
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      // Revert the select value on error
+      selectElement.value = selectElement.dataset.previousValue || 'ACTIVE';
       selectElement.disabled = false;
       selectElement.style.opacity = '1';
       
-      // Add success animation
-      row.style.background = 'rgba(0, 255, 0, 0.1)';
-      setTimeout(() => {
-        row.style.background = '';
-      }, 1000);
-      
-      this.updateStats();
-      this.showNotification(`User status updated to ${newStatus}`, 'success');
-    }, 500);
+      this.showNotification(`Failed to update status: ${error.message}`, 'error');
+    }
   }
 
   updateStats() {
@@ -251,11 +285,35 @@ class UsersManager {
     }
   }
 
-  deleteUser(userId) {
+  async deleteUser(userId) {
     const user = this.users.find(u => u.id === userId);
     if (user && confirm(`Are you sure you want to delete ${user.name}?`)) {
-      this.showNotification(`Deleting ${user.name}...`, 'warning');
-      // Here you would typically make an API call to delete the user
+      try {
+        this.showNotification(`Deleting ${user.name}...`, 'warning');
+        
+        const response = await fetch(`/admin/user/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          this.showNotification(`${user.name} deleted successfully!`, 'success');
+          // Reload the page to show updated data (same as products page)
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          const errorData = await response.json();
+          this.showNotification(`Failed to delete ${user.name}: ${errorData.message || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        this.showNotification(`Failed to delete ${user.name}: ${error.message}`, 'error');
+      }
+    } else if (!user) {
+      this.showNotification(`User not found!`, 'error');
     }
   }
 
@@ -352,6 +410,8 @@ function editUser(userId) {
 function deleteUser(userId) {
   if (window.usersManager) {
     window.usersManager.deleteUser(userId);
+  } else {
+    alert('System not ready. Please refresh the page.');
   }
 }
 

@@ -165,7 +165,7 @@ return await this.memberModel.findById(member._id).exec() as unknown as Member;
 
   public async getUsers(): Promise<Member[]> {
   const result = await this.memberModel
-  .find({memberType: MemberType.USER})
+  .find({memberType: MemberType.USER, memberStatus: {$ne: MemberStatus.DELETE}})
   .exec();
   if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
   
@@ -181,6 +181,20 @@ return await this.memberModel.findById(member._id).exec() as unknown as Member;
     
     return result as unknown as Member;
     }
+
+  public async deleteChosenUser(userId: string): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(userId);
+    const result = await this.memberModel
+      .findByIdAndUpdate(
+        {_id: memberId, memberType: MemberType.USER}, 
+        {memberStatus: MemberStatus.DELETE}, 
+        {new: true}
+      )
+      .exec();
+    if(!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+    
+    return result as unknown as Member;
+  }
 }
  
 

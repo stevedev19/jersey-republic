@@ -132,6 +132,20 @@ restaurantController.getUsers = async (req: Request, res: Response) => {
       }
   };
 
+  restaurantController.deleteChosenUser = async(req: Request, res: Response) => {
+    try {
+      console.log("deleteChosenUser");
+      const userId = req.params.id;
+      const result = await memberService.deleteChosenUser(userId);
+    
+      res.status(HttpCode.OK).json({ data: result }); 
+    } catch (err) {
+      console.log("Error deleteChosenUser", err);
+      if(err instanceof Errors) res.status(err.code).json(err)
+      else res.status(Errors.standard.code).json(Errors.standard);
+      }
+  };
+
 
  restaurantController.checkAuthSession = async (
   req: AdminRequest,
