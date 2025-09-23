@@ -26,24 +26,22 @@ class MemberService {
     .lean()
     .exec();
     if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
+    
     return result as unknown as Member;
   }
 
 public async signup(input: MemberInput): Promise<Member> {
-const salt = await bcrypt.genSalt();
-input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
+  const salt = await bcrypt.genSalt();
+  input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
 
-      
   try {   
     const result = await this.memberModel.create(input);
     result.memberPassword = "";
-     return result.toJSON() as unknown as Member;
-    } catch (err) {
-      console.error("Error, model:signup", err);
-      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
-    }
+    return result.toJSON() as unknown as Member;
+  } catch (err) {
+    throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
   }
+}
 
   public async login(input: LoginInput): Promise<Member> {
     const member = await this.memberModel
