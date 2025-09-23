@@ -39,25 +39,88 @@ function initLiveClock() {
 }
 
 
-// Dashboard Statistics with Animation
+// Dashboard Statistics with Real Data
 function initDashboardStats() {
-    const stats = {
-        totalUsers: 156,
-        activeLogins: 89,
-        totalJerseys: 24,
-        totalRevenue: 15420,
-        ordersToday: 12
+    // Show loading state
+    showLoadingState();
+    
+    // Fetch real statistics from the server
+    fetchDashboardStats();
+    
+    // Set up auto-refresh every 30 seconds
+    setInterval(fetchDashboardStats, 30000);
+}
+
+function showLoadingState() {
+    const elements = ['totalUsers', 'activeLogins', 'totalJerseys', 'totalRevenue', 'ordersToday'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = '...';
+            element.style.opacity = '0.6';
+        }
+    });
+}
+
+async function fetchDashboardStats() {
+    try {
+        const response = await fetch('/admin/stats/dashboard');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const stats = await response.json();
+        updateDashboardStats(stats);
+        
+        // Update last activity time
+        updateLastActivity();
+        
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        showNotification('Failed to load dashboard statistics', 'error');
+        // Fallback to cached/hardcoded values
+        loadFallbackStats();
+    }
+}
+
+function updateDashboardStats(stats) {
+    // Update user statistics
+    animateCounter('totalUsers', stats.users.total);
+    animateCounter('activeLogins', stats.users.active);
+    
+    // Update product statistics
+    animateCounter('totalJerseys', stats.products.total);
+    
+    // Update order statistics
+    animateCounter('ordersToday', stats.orders.today);
+    
+    // Update revenue
+    animateCounter('totalRevenue', stats.revenue.total, '$');
+    
+    // Update last updated time
+    const lastUpdated = new Date(stats.lastUpdated);
+    const timeString = lastUpdated.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+    
+    const lastActivityElement = document.getElementById('lastActivity');
+    if (lastActivityElement) {
+        lastActivityElement.textContent = timeString;
+    }
+}
+
+function loadFallbackStats() {
+    // Fallback to hardcoded values if API fails
+    const fallbackStats = {
+        users: { total: 156, active: 89 },
+        products: { total: 24 },
+        orders: { today: 12 },
+        revenue: { total: 15420 }
     };
     
-    // Animate counters
-    animateCounter('totalUsers', stats.totalUsers);
-    animateCounter('activeLogins', stats.activeLogins);
-    animateCounter('totalJerseys', stats.totalJerseys);
-    animateCounter('totalRevenue', stats.totalRevenue, '$');
-    animateCounter('ordersToday', stats.ordersToday);
-    
-    // Update last activity
-    updateLastActivity();
+    updateDashboardStats(fallbackStats);
 }
 
 function animateCounter(elementId, targetValue, prefix = '') {
@@ -118,30 +181,119 @@ function initQuickActions() {
                 this.style.transform = 'scale(1)';
             }, 150);
             
-            // Handle special actions
-            if (this.textContent.includes('Reports')) {
-                e.preventDefault();
-                showReports();
-            }
         });
     });
 }
 
-function showReports() {
-    showNotification('Reports feature coming soon!', 'info');
+
+// Activity Feed with Real Data
+function initActivityFeed() {
+    // Show loading state
+    showActivityLoadingState();
+    
+    // Fetch real activity data
+    fetchRecentActivity();
+    
+    // Set up auto-refresh every 60 seconds
+    setInterval(fetchRecentActivity, 60000);
 }
 
-// Activity Feed
-function initActivityFeed() {
-    const activityItems = document.querySelectorAll('.activity-item');
+function showActivityLoadingState() {
+    const activityList = document.querySelector('.activity-list');
+    if (activityList) {
+        activityList.innerHTML = `
+            <div class="activity-item loading">
+                <div class="activity-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>Loading recent activity...</h4>
+                    <p>Please wait while we fetch the latest updates</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+async function fetchRecentActivity() {
+    try {
+        const response = await fetch('/admin/stats/activity');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const activities = await response.json();
+        updateActivityFeed(activities);
+        
+    } catch (error) {
+        console.error('Error fetching recent activity:', error);
+        showNotification('Failed to load recent activity', 'error');
+        // Keep existing static content as fallback
+    }
+}
+
+function updateActivityFeed(activities) {
+    const activityList = document.querySelector('.activity-list');
+    if (!activityList) return;
     
+    if (activities.length === 0) {
+        activityList.innerHTML = `
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>No recent activity</h4>
+                    <p>No recent updates to display</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    activityList.innerHTML = activities.map(activity => `
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="${activity.icon}"></i>
+            </div>
+            <div class="activity-content">
+                <h4>${activity.title}</h4>
+                <p>${activity.description}</p>
+                <span class="activity-time">${formatTimeAgo(activity.timestamp)}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    // Animate items
+    const activityItems = activityList.querySelectorAll('.activity-item');
     activityItems.forEach((item, index) => {
-        // Stagger animation
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        
         setTimeout(() => {
             item.style.opacity = '1';
             item.style.transform = 'translateY(0)';
         }, index * 100);
     });
+}
+
+function formatTimeAgo(timestamp) {
+    const now = new Date();
+    const activityTime = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - activityTime) / 1000);
+    
+    if (diffInSeconds < 60) {
+        return `${diffInSeconds} seconds ago`;
+    } else if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60);
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600);
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else {
+        const days = Math.floor(diffInSeconds / 86400);
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
 }
 
 // Enhanced Notification System
@@ -254,8 +406,9 @@ document.addEventListener('keydown', function(e) {
     // Ctrl + R for refresh stats
     if (e.ctrlKey && e.key === 'r') {
         e.preventDefault();
-        initDashboardStats();
-        showNotification('Dashboard stats refreshed!', 'success');
+        fetchDashboardStats();
+        fetchRecentActivity();
+        showNotification('Dashboard refreshed!', 'success');
     }
     
 });

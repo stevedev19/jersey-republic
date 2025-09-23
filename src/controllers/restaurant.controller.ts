@@ -1,11 +1,13 @@
 import { NextFunction, Request,  Response } from "express";
 import{ T } from "../libs/types/common";
 import MemberService from "../models/Member.service"; 
+import StatisticsService from "../models/Statistics.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/member";
 import { MemberType } from "../libs/enums/member.enum";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 
 const memberService = new MemberService();
+const statisticsService = new StatisticsService();
 
  const restaurantController: T = {};
  restaurantController.goHome = (req: Request, res: Response) => {
@@ -176,5 +178,29 @@ restaurantController.getUsers = async (req: Request, res: Response) => {
                 res.send(`<script> alert("${message}"); window.location.replace('/admin/login') </script>`);  
             } 
           };
+
+ restaurantController.getDashboardStats = async (req: Request, res: Response) => {
+   try {
+     console.log("getDashboardStats");
+     const stats = await statisticsService.getDashboardStats();
+     res.status(HttpCode.OK).json(stats);
+   } catch (err) {
+     console.log("Error getDashboardStats", err);
+     if(err instanceof Errors) res.status(err.code).json(err)
+     else res.status(Errors.standard.code).json(Errors.standard);
+   }
+ };
+
+ restaurantController.getRecentActivity = async (req: Request, res: Response) => {
+   try {
+     console.log("getRecentActivity");
+     const activities = await statisticsService.getRecentActivity();
+     res.status(HttpCode.OK).json(activities);
+   } catch (err) {
+     console.log("Error getRecentActivity", err);
+     if(err instanceof Errors) res.status(err.code).json(err)
+     else res.status(Errors.standard.code).json(Errors.standard);
+   }
+ };
 
  export default restaurantController; 

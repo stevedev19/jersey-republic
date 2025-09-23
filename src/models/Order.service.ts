@@ -112,6 +112,22 @@ if(orderStatus === OrderStatus.PROCESS) {
 }
   return result.toObject() as Order;
    }
+
+   public async getAllOrders(): Promise<Order[]> {
+    try {
+        const result = await this.orderModel
+            .find({})
+            .sort({ createdAt: -1 })
+            .exec();
+        
+        if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+        
+        return result as unknown as Order[];
+    } catch (error) {
+        console.error('Error getting all orders:', error);
+        throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    }
+   }
 }
 
 

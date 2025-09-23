@@ -51,5 +51,10 @@ routerAdmin.post("/user/edit", restaurantController.updateChosenUser);
 routerAdmin.delete("/user/:id", restaurantController.verifyRestaurant, 
 restaurantController.deleteChosenUser);
 
+/* statistics */
+routerAdmin.get("/stats/dashboard", restaurantController.verifyRestaurant, 
+restaurantController.getDashboardStats);
+routerAdmin.get("/stats/activity", restaurantController.verifyRestaurant, 
+restaurantController.getRecentActivity);
 
 export default routerAdmin;
