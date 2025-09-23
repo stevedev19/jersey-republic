@@ -52,34 +52,14 @@
       </div>
     </div>
 
-    <!-- Video Background Container -->
-    <div class="video-container">
-      <video class="background-video" autoplay muted loop playsinline>
-        <source src="/videos/video1.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-overlay"></div>
-      <div class="hero-content">
-        <h1 class="hero-title">Welcome to Jersey Republic Admin</h1>
-        <p class="hero-subtitle">Manage your jersey collection with ease</p>
-        <div class="hero-features">
-          <div class="feature-item">
-            <i class="fas fa-shipping-fast"></i>
-            <span>Fast Shipping</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-heart"></i>
-            <span>Fan Favorite</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-star"></i>
-            <span>Premium Quality</span>
-          </div>
-        </div>
-      </div>
+    <!-- Photo Background Container -->
+    <div class="photo-container" style="background-image: url('/img/photo1.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+      <div class="photo-overlay"></div>
     </div>
 
 
+    <% if(member) { %>
+    <!-- System Overview Section - Only visible when admin is logged in -->
     <div class="dashboard-section">
       <div class="section-header">
         <h2 class="section-title">
@@ -179,7 +159,7 @@
       </div>
     </div>
 
-    <!-- Quick Actions Section -->
+    <!-- Quick Actions Section - Only visible when admin is logged in -->
     <div class="quick-actions-section">
       <div class="section-header">
         <h2 class="section-title">
@@ -211,16 +191,22 @@
       </div>
     </div>
 
-    <!-- Recent Activity Section -->
+    <!-- Recent Activity Section - Only visible when admin is logged in -->
     <div class="recent-activity-section">
       <div class="section-header">
         <h2 class="section-title">
           <i class="fas fa-history"></i>
           Recent Activity
         </h2>
+        <div class="section-actions">
+          <button class="action-btn-small" onclick="clearAllActivity()" title="Clear All Activity">
+            <i class="fas fa-trash-alt"></i>
+            Clear All
+          </button>
+        </div>
       </div>
       
-      <div class="activity-list">
+      <div class="activity-list" id="activityList">
         <div class="activity-item">
           <div class="activity-icon">
             <i class="fas fa-user-plus"></i>
@@ -229,6 +215,11 @@
             <h4>New user registered</h4>
             <p>John Doe joined the platform</p>
             <span class="activity-time">2 minutes ago</span>
+          </div>
+          <div class="activity-actions">
+            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         </div>
 
@@ -241,6 +232,11 @@
             <p>Arsenal Jersey - Size L</p>
             <span class="activity-time">15 minutes ago</span>
           </div>
+          <div class="activity-actions">
+            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
 
         <div class="activity-item">
@@ -251,6 +247,11 @@
             <h4>Product updated</h4>
             <p>Real Madrid Jersey stock updated</p>
             <span class="activity-time">1 hour ago</span>
+          </div>
+          <div class="activity-actions">
+            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         </div>
 
@@ -263,10 +264,40 @@
             <p>5-star rating for Manchester United Jersey</p>
             <span class="activity-time">2 hours ago</span>
           </div>
+          <div class="activity-actions">
+            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    <% } else { %>
+    <!-- Welcome message for non-authenticated users -->
+    <div class="welcome-section">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h2 class="welcome-title">Welcome to Jersey Republic Admin</h2>
+        <p class="welcome-message">Please log in to access the admin dashboard and manage your jersey store.</p>
+        <div class="welcome-actions">
+          <a href="/admin/login" class="welcome-btn primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Login
+          </a>
+          <a href="/admin/signup" class="welcome-btn secondary">
+            <i class="fas fa-user-plus"></i>
+            Sign Up
+          </a>
+        </div>
+      </div>
+    </div>
+    <% } %>
   </div>
+
+  <!-- Notification Container -->
+  <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
 
   <script type="text/javascript" src="/js/home.js"></script>
 </body>

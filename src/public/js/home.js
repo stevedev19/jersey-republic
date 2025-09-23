@@ -4,13 +4,24 @@ console.log("Enhanced Home Page with Video Background initialized");
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Home page loaded successfully");
     
-    // Initialize all features
+    // Always initialize basic features
     initLiveClock();
-    initDashboardStats();
-    initQuickActions();
-    initActivityFeed();
     initNotifications();
+    
+    // Only initialize admin features if admin is logged in
+    if (isAdminLoggedIn()) {
+        initDashboardStats();
+        initQuickActions();
+        initActivityFeed();
+    }
 });
+
+// Check if admin is logged in by looking for admin-specific elements
+function isAdminLoggedIn() {
+    // Check if dashboard section exists (only shown when admin is logged in)
+    const dashboardSection = document.querySelector('.dashboard-section');
+    return dashboardSection !== null;
+}
 
 // Live Clock Functionality
 function initLiveClock() {
@@ -64,13 +75,18 @@ function showLoadingState() {
 
 async function fetchDashboardStats() {
     try {
-        const response = await fetch('/admin/stats/dashboard');
+        const response = await fetch('/admin/stats/dashboard', {
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const stats = await response.json();
-        updateDashboardStats(stats);
+        const data = await response.json();
+        updateDashboardStats(data.data);
         
         // Update last activity time
         updateLastActivity();
@@ -84,6 +100,8 @@ async function fetchDashboardStats() {
 }
 
 function updateDashboardStats(stats) {
+    console.log('Updating dashboard stats:', stats);
+    
     // Update user statistics
     animateCounter('totalUsers', stats.users.total);
     animateCounter('activeLogins', stats.users.active);
@@ -109,6 +127,15 @@ function updateDashboardStats(stats) {
     if (lastActivityElement) {
         lastActivityElement.textContent = timeString;
     }
+    
+    // Remove loading state
+    const elements = ['totalUsers', 'activeLogins', 'totalJerseys', 'totalRevenue', 'ordersToday'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.opacity = '1';
+        }
+    });
 }
 
 function loadFallbackStats() {
@@ -217,13 +244,18 @@ function showActivityLoadingState() {
 
 async function fetchRecentActivity() {
     try {
-        const response = await fetch('/admin/stats/activity');
+        const response = await fetch('/admin/stats/activity', {
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const activities = await response.json();
-        updateActivityFeed(activities);
+        const data = await response.json();
+        updateActivityFeed(data.data);
         
     } catch (error) {
         console.error('Error fetching recent activity:', error);
@@ -251,8 +283,8 @@ function updateActivityFeed(activities) {
         return;
     }
     
-    activityList.innerHTML = activities.map(activity => `
-        <div class="activity-item">
+    activityList.innerHTML = activities.map((activity, index) => `
+        <div class="activity-item" data-activity-id="${index}">
             <div class="activity-icon">
                 <i class="${activity.icon}"></i>
             </div>
@@ -260,6 +292,11 @@ function updateActivityFeed(activities) {
                 <h4>${activity.title}</h4>
                 <p>${activity.description}</p>
                 <span class="activity-time">${formatTimeAgo(activity.timestamp)}</span>
+            </div>
+            <div class="activity-actions">
+                <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
     `).join('');
@@ -423,5 +460,80 @@ function optimizePerformance() {
 
 // Initialize performance optimizations
 document.addEventListener('DOMContentLoaded', optimizePerformance);
+
+// Activity Delete Functions
+function deleteActivity(button) {
+    const activityItem = button.closest('.activity-item');
+    const activityTitle = activityItem.querySelector('h4').textContent;
+    
+    if (confirm(`Are you sure you want to delete "${activityTitle}"?`)) {
+        // Add delete animation
+        activityItem.style.transform = 'translateX(-100%)';
+        activityItem.style.opacity = '0';
+        
+        setTimeout(() => {
+            activityItem.remove();
+            showNotification(`Activity "${activityTitle}" deleted successfully!`, 'success');
+            
+            // Check if no activities left
+            const remainingActivities = document.querySelectorAll('.activity-item');
+            if (remainingActivities.length === 0) {
+                const activityList = document.querySelector('.activity-list');
+                activityList.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>No recent activity</h4>
+                            <p>All activities have been cleared</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }, 300);
+    }
+}
+
+function clearAllActivity() {
+    const activityItems = document.querySelectorAll('.activity-item');
+    
+    if (activityItems.length === 0) {
+        showNotification('No activities to clear!', 'warning');
+        return;
+    }
+    
+    if (confirm(`Are you sure you want to clear all ${activityItems.length} activities?`)) {
+        const activityList = document.querySelector('.activity-list');
+        
+        // Animate all items out
+        activityItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.style.transform = 'translateX(-100%)';
+                item.style.opacity = '0';
+                
+                setTimeout(() => {
+                    item.remove();
+                }, 300);
+            }, index * 100);
+        });
+        
+        // Show empty state after all animations
+        setTimeout(() => {
+            activityList.innerHTML = `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>No recent activity</h4>
+                        <p>All activities have been cleared</p>
+                    </div>
+                </div>
+            `;
+            showNotification('All activities cleared successfully!', 'success');
+        }, activityItems.length * 100 + 300);
+    }
+}
 
 console.log("Home page JavaScript loaded successfully");
