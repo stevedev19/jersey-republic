@@ -32,8 +32,11 @@ if(inquiry.search) {
 
 const sort: T =
  inquiry.order === "productPrice" 
-? { [inquiry.order] : 1} 
+? { [inquiry.order] : -1} 
 : { [inquiry.order] : -1};
+
+console.log("Sorting by:", sort);
+console.log("Query parameters:", inquiry);
 
 const result = await this.productModel
 .aggregate([
@@ -43,6 +46,7 @@ const result = await this.productModel
 {$limit: inquiry.limit * 1 },
 ])
 .exec();
+console.log("Raw database result:", result);
 if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
 // Transform image URLs to full URLs and filter out non-existent files
@@ -57,6 +61,7 @@ const transformedResult = result.map((product: any) => ({
   }) || []
 }));
 
+console.log("Final transformed result:", transformedResult);
 return transformedResult as unknown as Product[];
 }
 
@@ -132,7 +137,7 @@ public async getAllProducts(): Promise<Product[]> {
    const transformedResult = result.map((product: any) => ({
      ...product.toObject(),
      productImages: product.productImages?.map((imagePath: string) => 
-       imagePath.startsWith('http') ? imagePath : `http://localhost:3003/${imagePath}`
+       imagePath.startsWith('http') ? imagePath : `http://localhost:3003${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
      ).filter((url: string) => {
        // For now, we'll include all URLs and let the frontend handle missing images
        return true;
@@ -145,7 +150,17 @@ public async getAllProducts(): Promise<Product[]> {
 
 public async createNewProduct(input: ProductInput): Promise<Product> {
     try {
+       console.log("=== PRODUCT SERVICE DEBUG ===");
+       console.log("createNewProduct - Input:", input);
+       console.log("createNewProduct - Required fields check:");
+       console.log("- productCollection:", input.productCollection);
+       console.log("- productName:", input.productName);
+       console.log("- productPrice:", input.productPrice);
+       console.log("- productLeftCount:", input.productLeftCount);
+       console.log("- productImages:", input.productImages);
+       
        const result = await this.productModel.create(input) as unknown as Product;
+       console.log("createNewProduct - Database result:", result);
        
        // Ensure image URLs have proper format for frontend consumption
        if (result.productImages) {
@@ -154,9 +169,12 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
          );
        }
        
+       console.log("createNewProduct - Final result:", result);
        return result;
       } catch (err) {
-      console.error("Error, model: createNewProduct:", err )  
+      console.error("ERROR, model: createNewProduct:", err);
+      console.error("Error details:", (err as Error).message);
+      console.error("Error stack:", (err as Error).stack);
         throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
       } 
    }
@@ -172,6 +190,16 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 
    return result as unknown as Product;
+  }
+
+  public async deleteChosenProduct(id: string): Promise<Product> {
+    id = shapeIntoMongooseObjectId(id);
+    const result = await this.productModel
+    .findByIdAndDelete({ _id: id })
+    .exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    return result as unknown as Product;
   }
 }
 

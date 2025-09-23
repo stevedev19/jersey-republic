@@ -1,0 +1,403 @@
+// Three.js Keyframe Animation System - Inspired by three.js examples
+// https://threejs.org/examples/#webgl_animation_keyframes
+console.log("Three.js Keyframe Animation System initialized");
+
+class ThreeJSKeyframeAnimation {
+  constructor() {
+    this.scene = null;
+    this.camera = null;
+    this.renderer = null;
+    this.mixer = null;
+    this.clock = new THREE.Clock();
+    this.animationActions = [];
+    this.meshes = [];
+    this.init();
+  }
+
+  init() {
+    this.createScene();
+    this.createCamera();
+    this.createRenderer();
+    this.createGeometry();
+    this.createKeyframeAnimations();
+    this.setupEventListeners();
+    this.animate();
+  }
+
+  createScene() {
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0x000000);
+    
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+    this.scene.add(ambientLight);
+    
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xdd6d04, 0.8);
+    directionalLight.position.set(10, 10, 5);
+    this.scene.add(directionalLight);
+  }
+
+  createCamera() {
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    this.camera.position.z = 5;
+  }
+
+  createRenderer() {
+    this.renderer = new THREE.WebGLRenderer({ 
+      alpha: true, 
+      antialias: true 
+    });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    
+    // Style the renderer
+    this.renderer.domElement.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.3;
+    `;
+    
+    document.body.appendChild(this.renderer.domElement);
+  }
+
+  createGeometry() {
+    // Create multiple geometric shapes with different materials
+    const geometries = [
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.SphereGeometry(0.7, 32, 32),
+      new THREE.ConeGeometry(0.7, 1.5, 8),
+      new THREE.TorusGeometry(0.5, 0.2, 16, 100),
+      new THREE.OctahedronGeometry(0.8)
+    ];
+
+    geometries.forEach((geometry, index) => {
+      // Create material with admin theme colors
+      const material = new THREE.MeshPhongMaterial({
+        color: new THREE.Color().setHSL(0.1 + index * 0.1, 0.8, 0.6),
+        transparent: true,
+        opacity: 0.8,
+        shininess: 100
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      
+      // Position meshes in a circle
+      const angle = (index / geometries.length) * Math.PI * 2;
+      mesh.position.x = Math.cos(angle) * 3;
+      mesh.position.y = Math.sin(angle) * 3;
+      mesh.position.z = Math.sin(index) * 2;
+      
+      this.scene.add(mesh);
+      this.meshes.push(mesh);
+    });
+  }
+
+  createKeyframeAnimations() {
+    // Create animation mixer
+    this.mixer = new THREE.AnimationMixer(this.scene);
+    
+    this.meshes.forEach((mesh, index) => {
+      // Create keyframe tracks for different properties
+      const positionTrack = new THREE.VectorKeyframeTrack(
+        '.position',
+        [0, 2, 4, 6, 8],
+        [
+          mesh.position.x, mesh.position.y, mesh.position.z,
+          mesh.position.x + 2, mesh.position.y + 1, mesh.position.z - 1,
+          mesh.position.x - 1, mesh.position.y - 2, mesh.position.z + 2,
+          mesh.position.x + 1, mesh.position.y + 1, mesh.position.z - 1,
+          mesh.position.x, mesh.position.y, mesh.position.z
+        ]
+      );
+
+      const rotationTrack = new THREE.VectorKeyframeTrack(
+        '.rotation',
+        [0, 2, 4, 6, 8],
+        [
+          0, 0, 0,
+          Math.PI, Math.PI, 0,
+          Math.PI * 2, Math.PI * 2, Math.PI,
+          Math.PI * 1.5, Math.PI * 0.5, Math.PI * 2,
+          0, 0, 0
+        ]
+      );
+
+      const scaleTrack = new THREE.VectorKeyframeTrack(
+        '.scale',
+        [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        [
+          1, 1, 1,
+          1.5, 1.5, 1.5,
+          0.5, 0.5, 0.5,
+          1.2, 1.2, 1.2,
+          0.8, 0.8, 0.8,
+          1.3, 1.3, 1.3,
+          0.7, 0.7, 0.7,
+          1.1, 1.1, 1.1,
+          1, 1, 1
+        ]
+      );
+
+      // Create animation clip
+      const clip = new THREE.AnimationClip(
+        `meshAnimation${index}`,
+        8,
+        [positionTrack, rotationTrack, scaleTrack]
+      );
+
+      // Create action and configure it
+      const action = this.mixer.clipAction(clip);
+      action.setLoop(THREE.LoopRepeat);
+      action.timeScale = 0.5 + index * 0.1; // Different speeds
+      action.play();
+
+      this.animationActions.push(action);
+    });
+  }
+
+  setupEventListeners() {
+    window.addEventListener('resize', () => {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Add mouse interaction
+    document.addEventListener('mousemove', (event) => {
+      const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+      
+      this.camera.position.x = mouseX * 2;
+      this.camera.position.y = mouseY * 2;
+      this.camera.lookAt(this.scene.position);
+    });
+  }
+
+  animate() {
+    requestAnimationFrame(() => this.animate());
+    
+    const delta = this.clock.getDelta();
+    
+    // Update animation mixer
+    if (this.mixer) {
+      this.mixer.update(delta);
+    }
+    
+    // Rotate camera around the scene
+    const time = this.clock.getElapsedTime();
+    this.camera.position.x = Math.cos(time * 0.1) * 8;
+    this.camera.position.z = Math.sin(time * 0.1) * 8;
+    this.camera.lookAt(this.scene.position);
+    
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+class FuturisticDashboard {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.createDataStreams();
+    this.initHolographicEffects();
+    this.setupInteractiveElements();
+  }
+
+  createDataStreams() {
+    const dashboardCards = document.querySelectorAll('.glass-card');
+    
+    dashboardCards.forEach((card, index) => {
+      const dataStream = document.createElement('div');
+      dataStream.className = 'data-stream';
+      dataStream.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+          transparent 0%, 
+          rgba(221, 109, 4, 0.1) 50%, 
+          transparent 100%);
+        animation: dataFlow ${2 + index * 0.5}s linear infinite;
+        pointer-events: none;
+        z-index: 1;
+      `;
+      
+      card.style.position = 'relative';
+      card.appendChild(dataStream);
+    });
+
+    if (!document.querySelector('#data-stream-styles')) {
+      const style = document.createElement('style');
+      style.id = 'data-stream-styles';
+      style.textContent = `
+        @keyframes dataFlow {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  initHolographicEffects() {
+    const navbar = document.querySelector('.glass-navbar');
+    if (navbar) {
+      navbar.addEventListener('mouseenter', () => {
+        navbar.style.boxShadow = '0 0 30px rgba(221, 109, 4, 0.3), inset 0 0 30px rgba(221, 109, 4, 0.1)';
+      });
+      
+      navbar.addEventListener('mouseleave', () => {
+        navbar.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+      });
+    }
+  }
+
+  setupInteractiveElements() {
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        this.createScanEffect(card);
+      });
+    });
+  }
+
+  createScanEffect(element) {
+    const scanLine = document.createElement('div');
+    scanLine.style.cssText = `
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(221, 109, 4, 0.8) 50%, 
+        transparent 100%);
+      animation: scanDown 0.8s ease-out;
+      pointer-events: none;
+      z-index: 2;
+    `;
+
+    if (!document.querySelector('#scan-styles')) {
+      const style = document.createElement('style');
+      style.id = 'scan-styles';
+      style.textContent = `
+        @keyframes scanDown {
+          0% { 
+            top: 0; 
+            opacity: 0; 
+          }
+          50% { 
+            opacity: 1; 
+          }
+          100% { 
+            top: 100%; 
+            opacity: 0; 
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    element.appendChild(scanLine);
+    
+    setTimeout(() => {
+      if (scanLine.parentNode) {
+        scanLine.parentNode.removeChild(scanLine);
+      }
+    }, 800);
+  }
+}
+
+class DigitalClock {
+  constructor() {
+    this.clockElement = document.getElementById('liveClock');
+    this.init();
+  }
+
+  init() {
+    if (!this.clockElement) return;
+    
+    this.updateClock();
+    setInterval(() => this.updateClock(), 1000);
+  }
+
+  updateClock() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    
+    if (Math.random() < 0.1) {
+      this.addGlitchEffect();
+    }
+    
+    this.clockElement.textContent = timeString;
+  }
+
+  addGlitchEffect() {
+    const originalText = this.clockElement.textContent;
+    const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    let glitchText = '';
+    for (let i = 0; i < originalText.length; i++) {
+      if (Math.random() < 0.3) {
+        glitchText += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+      } else {
+        glitchText += originalText[i];
+      }
+    }
+    
+    this.clockElement.textContent = glitchText;
+    this.clockElement.style.color = '#ff0040';
+    
+    setTimeout(() => {
+      this.clockElement.style.color = 'rgba(255, 255, 255, 0.7)';
+    }, 100);
+  }
+}
+
+// Initialize Three.js animation when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Initializing Three.js Keyframe Animation System...');
+  
+  // Wait for Three.js to load
+  if (typeof THREE !== 'undefined') {
+    // Initialize Three.js Keyframe Animation
+    new ThreeJSKeyframeAnimation();
+    
+    // Initialize Futuristic Dashboard
+    new FuturisticDashboard();
+    
+    // Initialize Digital Clock
+    new DigitalClock();
+    
+    console.log('Three.js Keyframe Animation System ready!');
+  } else {
+    console.error('Three.js library not loaded');
+  }
+});
+
+// Export for external use
+window.ThreeJSAdmin = {
+  ThreeJSKeyframeAnimation,
+  FuturisticDashboard,
+  DigitalClock
+};

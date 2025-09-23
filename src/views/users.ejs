@@ -1,6 +1,7 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/users.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
   <div class="users-container">
@@ -19,21 +20,31 @@
       </ul>
     </div>
 
-    <div class="users-frame" style="color: #dddddd">
-      <div class="board" style="font-size: 40px">Please login first!</div>
+    <div class="users-frame">
+      <div class="login-prompt">
+        <div class="login-icon">
+          <i class="fas fa-lock"></i>
+        </div>
+        <h2 class="login-title">Authentication Required</h2>
+        <p class="login-message">Please login to access the user management system</p>
+        <a href="/admin/login" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i>
+          Login Now
+        </a>
+      </div>
     </div>
 
     <% } else { %>
     <div class="navigation-menu">
       <ul class="nav justify-content-center">
         <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
+          <a class="nav-link" href="/admin/">Home</a>
         </li>
         <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/product/all">Menu</a>
+          <a class="nav-link" href="/admin/product/all">Jerseys</a>
         </li>
         <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/user/all">Users</a>
+          <a class="nav-link active" href="/admin/user/all">Users</a>
         </li>
         <li
           class="nav-item"
@@ -47,36 +58,170 @@
 
     <div class="users-frame">
       <div class="board">
-        <div class="user-table">
-          <span class="header-name" style="margin-bottom: 30px"
-            >All Users List</span
-          >
-          <table class="table table-hover table-sm">
-            <thead class="thead-light">
-              <tr class="thead-light">
-                <th scope="col">No</th>
-                <th scope="col">Name</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <!--  LOOP PRODUCTS: START  -->
-           <% users.map(function(value, index){%>
-                <tbody style="background: white">
-                  <td><%= index+1 %></td>
-                  <td><%= value.memberNick %></td>
-                  <td><%= value.memberPhone %></td>
-                  <td style="width: 13%">
-                    <select class="spec-select member-status" id="<%= value._id%>">
-                      <option value="ACTIVE" <%= value.memberStatus === 'ACTIVE' ? 'selected': ''%> >ACTIVE</option>
-                      <option value="BLOCK" <%= value.memberStatus === 'BLOCK' ? 'selected': ''%> >BLOCK</option>
-                      <option value="DELETE"<%= value.memberStatus === 'DELETE' ? 'selected': ''%> >DELETE</option>
+        <!-- Enhanced Header Section -->
+        <div class="page-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="header-text">
+              <h1 class="page-title">User Management</h1>
+              <p class="page-subtitle">Manage user accounts and permissions</p>
+            </div>
+          </div>
+          <div class="header-stats">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number" id="activeUsers">0</span>
+                <span class="stat-label">Active Users</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-user-times"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number" id="blockedUsers">0</span>
+                <span class="stat-label">Blocked Users</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number" id="totalUsers">0</span>
+                <span class="stat-label">Total Users</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced User Table -->
+        <div class="user-table-container">
+          <div class="table-header">
+            <h3 class="table-title">
+              <i class="fas fa-list"></i>
+              All Users List
+            </h3>
+            <div class="table-controls">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="userSearch" placeholder="Search users...">
+              </div>
+              <div class="filter-dropdown">
+                <select id="statusFilter" class="filter-select">
+                  <option value="">All Status</option>
+                  <option value="ACTIVE">Active</option>
+                  <option value="BLOCK">Blocked</option>
+                  <option value="DELETE">Deleted</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="index">
+                    <i class="fas fa-hashtag"></i>
+                    No
+                  </th>
+                  <th class="sortable" data-sort="name">
+                    <i class="fas fa-user"></i>
+                    Name
+                  </th>
+                  <th class="sortable" data-sort="phone">
+                    <i class="fas fa-phone"></i>
+                    Phone
+                  </th>
+                  <th class="sortable" data-sort="points">
+                    <i class="fas fa-star"></i>
+                    Points
+                  </th>
+                  <th class="sortable" data-sort="status">
+                    <i class="fas fa-toggle-on"></i>
+                    Status
+                  </th>
+                  <th class="actions-column">
+                    <i class="fas fa-cogs"></i>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% users.map(function(value, index){%>
+                <tr class="user-row" data-user-id="<%= value._id%>">
+                  <td class="user-number">
+                    <span class="number-badge"><%= index+1 %></span>
+                  </td>
+                  <td class="user-info">
+                    <div class="user-avatar">
+                      <% if(value.memberImage) { %>
+                        <img src="/<%= value.memberImage %>" alt="<%= value.memberNick %>" class="avatar-img">
+                      <% } else { %>
+                        <div class="avatar-placeholder">
+                          <i class="fas fa-user"></i>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="user-details">
+                      <span class="user-name"><%= value.memberNick %></span>
+                      <% if(value.memberAddress) { %>
+                        <span class="user-location">
+                          <i class="fas fa-map-marker-alt"></i>
+                          <%= value.memberAddress %>
+                        </span>
+                      <% } %>
+                    </div>
+                  </td>
+                  <td class="user-phone">
+                    <a href="tel:<%= value.memberPhone %>" class="phone-link">
+                      <i class="fas fa-phone"></i>
+                      <%= value.memberPhone %>
+                    </a>
+                  </td>
+                  <td class="user-points">
+                    <span class="points-badge">
+                      <i class="fas fa-star"></i>
+                      <%= value.memberPoints || 0 %>
+                    </span>
+                  </td>
+                  <td class="status-cell">
+                    <select class="status-select member-status" id="<%= value._id%>">
+                      <option value="ACTIVE" <%= value.memberStatus === 'ACTIVE' ? 'selected': ''%>>
+                        <i class="fas fa-check-circle"></i> Active
+                      </option>
+                      <option value="BLOCK" <%= value.memberStatus === 'BLOCK' ? 'selected': ''%>>
+                        <i class="fas fa-ban"></i> Blocked
+                      </option>
+                      <option value="DELETE" <%= value.memberStatus === 'DELETE' ? 'selected': ''%>>
+                        <i class="fas fa-trash"></i> Deleted
+                      </option>
                     </select>
                   </td>
-                </tbody>
-             <% })%>
-            <!--  LOOP PRODUCTS: END  -->
-          </table>
+                  <td class="actions-cell">
+                    <div class="action-buttons">
+                      <button class="action-btn view-btn" onclick="viewUser('<%= value._id%>')" title="View Details">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="action-btn edit-btn" onclick="editUser('<%= value._id%>')" title="Edit User">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="action-btn delete-btn" onclick="deleteUser('<%= value._id%>')" title="Delete User">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <% })%>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

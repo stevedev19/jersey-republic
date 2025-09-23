@@ -38,6 +38,11 @@ routerAdmin.post(
   restaurantController.verifyRestaurant,
   productController.updateChosenProduct
 );
+routerAdmin.delete(
+  "/product/:id", 
+  restaurantController.verifyRestaurant,
+  productController.deleteChosenProduct
+);
 /* user */
 
 routerAdmin.get("/user/all", restaurantController.verifyRestaurant, 

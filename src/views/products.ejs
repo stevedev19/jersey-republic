@@ -1,16 +1,17 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/products.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
   <div class="products-container">
     <div class="navigation-menu">
       <ul class="nav justify-content-center">
         <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
+          <a class="nav-link" href="/admin/">Home</a>
         </li>
         <li class="nav-item" style="cursor: pointer">
-          <a class="nav-link" href="/admin/product/all">Jerseys</a>
+          <a class="nav-link active" href="/admin/product/all">Jerseys</a>
         </li>
         <li class="nav-item" style="cursor: pointer">
           <a class="nav-link" href="/admin/user/all">Users</a>
@@ -25,215 +26,440 @@
       </ul>
     </div>
 
-    <div class="restaurant-menu-frame">
+    <div class="products-frame">
       <div class="board">
-        <div class="dishes-table">
-          <span class="new-dish-txt" style="margin-bottom: 30px">
-            FOOTBALL JERSEY COLLECTION
-          </span>
-          <table class="table table-bordered table-hover">
-            <thead class="thead-light">
-              <tr class="thead-light">
-                <th scope="col">T/r</th>
-                <th scope="col">Jersey Name</th>
-                <th scope="col">League</th>
-                <th scope="col">Kit Type</th>
-                <th scope="col">Size</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <!--  LOOP PRODUCTS: START  -->
-            <% products.map(function(value, key){ %> 
-                <tbody style="background: white">
-                  <td><%= key + 1 %></td>
-                  <td><%=value.productName %></td>
-                  <td><%= value.productCollection %></td>
-                  <td><%= value.productVolume %></td>
-                  <td><%= value.productSize %></td>
-                  <td>$<%= value.productPrice %></td>
-                  <td><%= value.productLeftCount %></td>
-                  <td>
-                    <select class="spec-select new-product-status"
-                    id="<%= value._id %>">
-                      <option value="PAUSE" <%= value.productStatus === 'PAUSE' ? 'selected': '' %>>PAUSE</option>
-                      <option value="PROCESS"<%= value.productStatus === 'PROCESS' ? 'selected': '' %>>PROCESS</option>
-                      <option value="DELETE"<%= value.productStatus === 'DELETE' ? 'selected': '' %>>DELETE</option>
-                    </select>
-                  </td>
-                </tbody> 
-                <% }) %>
-            <!--  LOOP PRODUCTS: END  -->
-          </table>
-          <div
-            class="long-input"
-            style="align-items: flex-end; margin-bottom: 25px"
-          >
-            <button class="btn btn-primary" id="process-btn">
-              New Product
-            </button>
+        <!-- Enhanced Header Section -->
+        <div class="page-header">
+          <div class="header-content">
+            <div class="header-icon">
+              <i class="fas fa-futbol"></i>
+            </div>
+            <div class="header-text">
+              <h1 class="page-title">Jersey Management</h1>
+              <p class="page-subtitle">Manage football jersey collection and inventory</p>
+            </div>
+          </div>
+          <div class="header-stats">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-tshirt"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number" id="totalJerseys">0</span>
+                <span class="stat-label">Total Jerseys</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-play-circle"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number" id="activeJerseys">0</span>
+                <span class="stat-label">Active Jerseys</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-number" id="totalValue">$0</span>
+                <span class="stat-label">Total Value</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <form
-         onsubmit="return validateForm()"
-          action="/admin/product/create"
-          method="POST"
-          class="dish-container"
-          enctype="multipart/form-data"
-        >
-          <div class="long-input" style="display: flex; align-items: center">
-            <span class="new-dish-txt">NEW PRODUCT DETAIL</span>
-          </div>
-          <div class="login-input-frame">
-            <div class="long-input">
-              <label>Product Name</label>
-              <input
-                type="text"
-                placeholder="Name"
-                name="productName"
-                class="product-name"
-              />
-            </div>
-            <input
-              name="productStatus"
-              value="PAUSE"
-              class="product-status"
-              hidden
-            />
-          </div>
-          <div class="half-input-frame">
-            <div class="half-input">
-              <label>Product Price</label>
-              <input
-                type="number"
-                placeholder="Price"
-                name="productPrice"
-                class="product-price"
-              />
-            </div>
-            <div class="half-input">
-              <label>Product Left Counts</label>
-              <input
-                type="number"
-                placeholder="Counts"
-                name="productLeftCount"
-                class="product-left-count"
-              />
-            </div>
-          </div>
-          <div class="half-input-frame">
-            <div class="half-input">
-              <label>Product Type</label>
-              <select class="product-collection" name="productCollection">
-                <option value="PREMIER_LEAGUE" selected>Premier League</option>
-                <option value="LA_LIGA">La Liga</option>
-                <option value="SERIE_A">Serie A</option>
-                <option value="BUNDESLIGA">Bundesliga</option>
-                <option value="LIGUE_1">Ligue 1</option>
-                <option value="CHAMPIONS_LEAGUE">Champions League</option>
-                <option value="NATIONAL_TEAMS">National Teams</option>
-                <option value="RETRO">Retro</option>
-                
-              </select>
-            </div>
-
-            <div class="half-input" id="product-collection">
-              <label>Jersey Size</label>
-              <select class="product-size" name="productSize">
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M" selected>M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
-               
-              </select>
-            </div>
-
-            <div class="half-input" id="product-volume" style="display: none">
-              <label>Kit Type</label>
-              <select class="product-volume" name="productVolume">
-                <option value="HOME" selected>Home Kit</option>
-                <option value="AWAY">Away Kit</option>
-                <option value="THIRD">Third Kit</option>
-                <option value="TRAINING">Training Kit</option>
-                <option value="SPECIAL">Special Edition</option>
-           
-              </select>
-            </div>
-          </div>
-          <div class="long-input">
-            <label>Product Description</label>
-            <textarea name="productDesc" class="product-desc"></textarea>
-          </div>
-
-          <div class="img-frame">
-            <label>Product Images</label>
-            <div class="media-frame">
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="1" id="image-section-1" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-one"
-                  required
-                  onchange="previewFileHandler(this,1)"
-                />
+        <!-- Enhanced Products Table -->
+        <div class="products-table-container">
+          <div class="table-header">
+            <h3 class="table-title">
+              <i class="fas fa-list"></i>
+              Football Jersey Collection
+            </h3>
+            <div class="table-controls">
+              <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="productSearch" placeholder="Search jerseys...">
               </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="2" id="image-section-2" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-two"
-                  onchange="previewFileHandler(this,2)"
-                />
+              <div class="filter-dropdown">
+                <select id="leagueFilter" class="filter-select">
+                  <option value="">All Leagues</option>
+                  <option value="PREMIER_LEAGUE">Premier League</option>
+                  <option value="LA_LIGA">La Liga</option>
+                  <option value="SERIE_A">Serie A</option>
+                  <option value="BUNDESLIGA">Bundesliga</option>
+                  <option value="LIGUE_1">Ligue 1</option>
+                  <option value="CHAMPIONS_LEAGUE">Champions League</option>
+                  <option value="UZBEKISTAN_LEAGUE">Uzbekistan League</option>
+                  <option value="NATIONAL_TEAMS">National Teams</option>
+                  <option value="RETRO">Retro</option>
+                </select>
               </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="3" id="image-section-3" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-three"
-                  onchange="previewFileHandler(this,3)"
-                />
+              <div class="filter-dropdown">
+                <select id="statusFilter" class="filter-select">
+                  <option value="">All Status</option>
+                  <option value="PROCESS">Active</option>
+                  <option value="PAUSE">Paused</option>
+                  <option value="DELETE">Deleted</option>
+                </select>
               </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="4" id="image-section-4" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-four"
-                  onchange="previewFileHandler(this,4)"
-                />
-              </div>
-              <div class="upload-img-box">
-                <img src="/img/upload.svg" class="5" id="image-section-5" />
-                <input
-                  type="file"
-                  id="file"
-                  name="productImages"
-                  class="image-five"
-                  onchange="previewFileHandler(this,5)"
-                />
-              </div>
-              <input name="restaurantIid" class="restaurant-id" hidden />
             </div>
           </div>
 
-          <div class="operation-buttons">
-            <button class="btn btn-danger" id="cancel-btn">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="create-btn">
-              Create
+          <div class="table-wrapper">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-sort="index">
+                    <i class="fas fa-hashtag"></i>
+                    #
+                  </th>
+                  <th class="sortable" data-sort="name">
+                    <i class="fas fa-tshirt"></i>
+                    Jersey Name
+                  </th>
+                  <th class="sortable" data-sort="league">
+                    <i class="fas fa-trophy"></i>
+                    League
+                  </th>
+                  <th class="sortable" data-sort="kit">
+                    <i class="fas fa-palette"></i>
+                    Kit Type
+                  </th>
+                  <th class="sortable" data-sort="size">
+                    <i class="fas fa-ruler"></i>
+                    Size
+                  </th>
+                  <th class="sortable" data-sort="price">
+                    <i class="fas fa-dollar-sign"></i>
+                    Price
+                  </th>
+                  <th class="sortable" data-sort="stock">
+                    <i class="fas fa-boxes"></i>
+                    Stock
+                  </th>
+                  <th class="sortable" data-sort="status">
+                    <i class="fas fa-toggle-on"></i>
+                    Status
+                  </th>
+                  <th class="actions-column">
+                    <i class="fas fa-cogs"></i>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% products.map(function(value, key){ %>
+                <tr class="product-row" data-product-id="<%= value._id%>">
+                  <td class="product-number">
+                    <span class="number-badge"><%= key + 1 %></span>
+                  </td>
+                  <td class="product-info">
+                    <div class="product-image">
+                      <% if(value.productImages && value.productImages.length > 0) { %>
+                        <img src="<%= value.productImages[0] %>" alt="<%= value.productName %>" class="jersey-img">
+                      <% } else { %>
+                        <div class="image-placeholder">
+                          <i class="fas fa-tshirt"></i>
+                        </div>
+                      <% } %>
+                    </div>
+                    <div class="product-details">
+                      <span class="product-name"><%= value.productName %></span>
+                      <span class="product-desc"><%= value.productDesc || 'No description' %></span>
+                    </div>
+                  </td>
+                  <td class="league-cell">
+                    <span class="league-badge">
+                      <i class="fas fa-trophy"></i>
+                      <%= value.productCollection %>
+                    </span>
+                  </td>
+                  <td class="kit-cell">
+                    <span class="kit-badge">
+                      <i class="fas fa-palette"></i>
+                      <%= value.productVolume %>
+                    </span>
+                  </td>
+                  <td class="size-cell">
+                    <span class="size-badge">
+                      <i class="fas fa-ruler"></i>
+                      <%= value.productSize %>
+                    </span>
+                  </td>
+                  <td class="price-cell">
+                    <span class="price-badge">
+                      <i class="fas fa-dollar-sign"></i>
+                      $<%= value.productPrice %>
+                    </span>
+                  </td>
+                  <td class="stock-cell">
+                    <span class="stock-badge <%= value.productLeftCount < 10 ? 'low-stock' : '' %>">
+                      <i class="fas fa-boxes"></i>
+                      <%= value.productLeftCount %>
+                    </span>
+                  </td>
+                  <td class="status-cell">
+                    <select class="status-select new-product-status" id="<%= value._id %>">
+                      <option value="PAUSE" <%= value.productStatus === 'PAUSE' ? 'selected': '' %>>
+                        <i class="fas fa-pause-circle"></i> Paused
+                      </option>
+                      <option value="PROCESS" <%= value.productStatus === 'PROCESS' ? 'selected': '' %>>
+                        <i class="fas fa-play-circle"></i> Active
+                      </option>
+                      <option value="DELETE" <%= value.productStatus === 'DELETE' ? 'selected': '' %>>
+                        <i class="fas fa-trash"></i> Deleted
+                      </option>
+                    </select>
+                  </td>
+                  <td class="actions-cell">
+                    <div class="action-buttons">
+                      <button class="action-btn view-btn" onclick="viewProduct('<%= value._id%>')" title="View Details">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                      <button class="action-btn edit-btn" onclick="editProduct('<%= value._id%>')" title="Edit Product">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="action-btn delete-btn" onclick="deleteProduct('<%= value._id%>')" title="Delete Product">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Enhanced Add Product Form -->
+        <div class="add-product-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <i class="fas fa-plus-circle"></i>
+              Add New Jersey
+            </h3>
+            <button class="toggle-form-btn" id="toggle-form-btn">
+              <i class="fas fa-plus"></i>
+              New Product
             </button>
           </div>
-        </form>
+
+          <form
+            onsubmit="return validateForm()"
+            action="/admin/product/create"
+            method="POST"
+            class="product-form"
+            enctype="multipart/form-data"
+            id="product-form"
+            style="display: none;"
+          >
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-tshirt"></i>
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter jersey name"
+                  name="productName"
+                  class="form-input"
+                  required
+                />
+              </div>
+
+              <input
+                name="productStatus"
+                value="PAUSE"
+                class="product-status"
+                hidden
+              />
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-dollar-sign"></i>
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  placeholder="Enter price"
+                  name="productPrice"
+                  class="form-input"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-boxes"></i>
+                  Stock Quantity
+                </label>
+                <input
+                  type="number"
+                  placeholder="Enter stock count"
+                  name="productLeftCount"
+                  class="form-input"
+                  min="0"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-trophy"></i>
+                  League/Collection
+                </label>
+                <select class="form-select" name="productCollection" required>
+                  <option value="PREMIER_LEAGUE">Premier League</option>
+                  <option value="LA_LIGA">La Liga</option>
+                  <option value="SERIE_A">Serie A</option>
+                  <option value="BUNDESLIGA">Bundesliga</option>
+                  <option value="LIGUE_1">Ligue 1</option>
+                  <option value="CHAMPIONS_LEAGUE">Champions League</option>
+                  <option value="UZBEKISTAN_LEAGUE">Uzbekistan League</option>
+                  <option value="NATIONAL_TEAMS">National Teams</option>
+                  <option value="RETRO">Retro</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-ruler"></i>
+                  Size
+                </label>
+                <select class="form-select" name="productSize" required>
+                  <option value="XS">XS</option>
+                  <option value="S">S</option>
+                  <option value="M" selected>M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-palette"></i>
+                  Kit Type
+                </label>
+                <select class="form-select" name="productVolume" required>
+                  <option value="HOME" selected>Home Kit</option>
+                  <option value="AWAY">Away Kit</option>
+                  <option value="THIRD">Third Kit</option>
+                  <option value="TRAINING">Training Kit</option>
+                  <option value="SPECIAL">Special Edition</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">
+                <i class="fas fa-align-left"></i>
+                Description
+              </label>
+              <textarea 
+                name="productDesc" 
+                class="form-textarea"
+                placeholder="Enter product description..."
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">
+                <i class="fas fa-images"></i>
+                Product Images
+              </label>
+              <div class="image-upload-grid">
+                <div class="upload-box">
+                  <img src="/img/upload.svg" class="upload-placeholder" id="image-preview-1" />
+                  <input
+                    type="file"
+                    name="productImages"
+                    class="image-input"
+                    accept="image/*"
+                    onchange="previewFileHandler(this,1)"
+                  />
+                  <div class="upload-overlay">
+                    <i class="fas fa-camera"></i>
+                    <span>Upload Image</span>
+                  </div>
+                </div>
+                <div class="upload-box">
+                  <img src="/img/upload.svg" class="upload-placeholder" id="image-preview-2" />
+                  <input
+                    type="file"
+                    name="productImages"
+                    class="image-input"
+                    accept="image/*"
+                    onchange="previewFileHandler(this,2)"
+                  />
+                  <div class="upload-overlay">
+                    <i class="fas fa-camera"></i>
+                    <span>Upload Image</span>
+                  </div>
+                </div>
+                <div class="upload-box">
+                  <img src="/img/upload.svg" class="upload-placeholder" id="image-preview-3" />
+                  <input
+                    type="file"
+                    name="productImages"
+                    class="image-input"
+                    accept="image/*"
+                    onchange="previewFileHandler(this,3)"
+                  />
+                  <div class="upload-overlay">
+                    <i class="fas fa-camera"></i>
+                    <span>Upload Image</span>
+                  </div>
+                </div>
+                <div class="upload-box">
+                  <img src="/img/upload.svg" class="upload-placeholder" id="image-preview-4" />
+                  <input
+                    type="file"
+                    name="productImages"
+                    class="image-input"
+                    accept="image/*"
+                    onchange="previewFileHandler(this,4)"
+                  />
+                  <div class="upload-overlay">
+                    <i class="fas fa-camera"></i>
+                    <span>Upload Image</span>
+                  </div>
+                </div>
+                <div class="upload-box">
+                  <img src="/img/upload.svg" class="upload-placeholder" id="image-preview-5" />
+                  <input
+                    type="file"
+                    name="productImages"
+                    class="image-input"
+                    accept="image/*"
+                    onchange="previewFileHandler(this,5)"
+                  />
+                  <div class="upload-overlay">
+                    <i class="fas fa-camera"></i>
+                    <span>Upload Image</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="cancel-form-btn">
+                <i class="fas fa-times"></i>
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Create Jersey
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -241,4 +467,4 @@
   <script type="text/javascript" src="/js/products.js"></script>
 </body>
 
-<%- include('includes/footer') %>
+<%- include('includes/footer')%>

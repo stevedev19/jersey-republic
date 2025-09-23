@@ -1,6 +1,7 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/home.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
@@ -52,42 +53,12 @@
       </div>
     </div>
 
-    <!-- Video Background Container -->
-    <div class="video-container">
-      <video class="background-video" autoplay muted loop playsinline>
-        <source src="/videos/video1.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-overlay"></div>
-            <div class="feature-item">
-              <i class="fas fa-shipping-fast"></i>
-              <span>Fast Shipping</span>
-            </div>
-            <div class="feature-item">
-              <i class="fas fa-heart"></i>
-              <span>Fan Favorite</span>
-            </div>
-          </div>
-          
-          <div class="about-stats">
-            <div class="stat-item">
-              <div class="stat-number">5000+</div>
-              <div class="stat-label">Customers</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">50+</div>
-              <div class="stat-label">Teams</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">99%</div>
-              <div class="stat-label">Satisfaction</div>
-            </div>
-          </div>
-        </div>
-      </div>      </div>
+    <!-- Three.js Keyframe Animation Container -->
+    <div class="animation-frame">
+      <div id="threejs-container"></div>
     </div>
 
-
+    <!-- Enhanced Dashboard Section -->
     <div class="dashboard-section">
       <div class="section-header">
         <h2 class="section-title">

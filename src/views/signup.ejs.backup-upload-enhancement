@@ -52,13 +52,13 @@
             <div class="sign-up-frame">
               <label class="form-label">
                 <i class="fas fa-store"></i>
-                Store Admin Name *
+                Restaurant Name *
               </label>
               <input
                 type="text"
                 name="memberNick"
                 class="member-nick form-input"
-                placeholder="Store Admin name"
+                placeholder="Enter your restaurant name"
                 value=""
                 required
               />
@@ -72,7 +72,7 @@
                 type="text"
                 name="memberPhone"
                 class="member-phone form-input"
-                placeholder="Phone number"
+                placeholder="Enter your phone number"
                 value=""
                 required
               />
@@ -114,41 +114,23 @@
         <!-- Image Upload Section -->
         <div class="form-section">
           <h3 class="section-title">
-            <!-- <i class="fas fa-image"></i>
-            Store Admin Image -->
+            <i class="fas fa-image"></i>
+            Restaurant Image
           </h3>
           
           <div class="signup-input-frame">
-          <div class="media-frame">
-            <div class="upload-box">
-              <img class="upload-placeholder" src="/img/store.jpeg" id="imagePreview" />
-              <input
-                type="file"
-                id="input-file"
-                class="image-input"
-                name="memberImage"
-                accept="image/jpeg,image/jpg,image/png"
-                onchange="previewFileHandler(this, 1)"
-              />
-              <div class="upload-overlay">
-                <i class="fas fa-camera"></i>
-              </div>
-            </div>
-            
-            <div class="upload-info">
-              <div class="upload-header">
-                <span class="media-text">Store Admin Image</span>
-                <div class="file-requirements">
-                  <i class="fas fa-info-circle"></i>
-                  <span>JPG, JPEG, or PNG only (max 5MB)</span>
+            <div class="media-frame">
+              <div class="image-preview-container">
+                <img class="upload-img-frame" src="/img/default.jpeg" id="imagePreview" />
+                <div class="image-overlay">
+                  <i class="fas fa-camera"></i>
+                  <span>Click to upload</span>
                 </div>
               </div>
-            </div>
-          </div>              </div>
               
               <div class="upload-container">
                 <div class="upload-header">
-                  <span class="media-text">Store Admin Image</span>
+                  <span class="media-text">Restaurant Image</span>
                   <div class="file-requirements">
                     <i class="fas fa-info-circle"></i>
                     <span>JPG, JPEG, or PNG only</span>
@@ -192,27 +174,26 @@
               </div>
             </div>
           </div>
-          <div class="submit-section">
-            <button class="signup-btn btn" name="signup" type="submit">
-              <i class="fas fa-user-plus"></i>
-               Create Account
-            </button>
-            
-            <div class="terms-notice">
-              <i class="fas fa-shield-alt"></i>
-              <span>By creating an account, you agree to our Terms of Service and Privacy Policy</span>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
         </div>
 
         <!-- Hidden Field -->
         <input name="memberType" value="RESTAURANT" hidden />
 
         <!-- Submit Button -->
-       
+        <div class="submit-section">
+          <button class="signup-btn btn" name="signup" type="submit">
+            <i class="fas fa-user-plus"></i>
+            Create Account
+          </button>
+          
+          <div class="terms-notice">
+            <i class="fas fa-shield-alt"></i>
+            <span>By creating an account, you agree to our Terms of Service and Privacy Policy</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 
   <script type="text/javascript" src="/js/signup.js"></script>
 </body>
