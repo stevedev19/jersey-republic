@@ -280,9 +280,72 @@ class UsersManager {
   editUser(userId) {
     const user = this.users.find(u => u.id === userId);
     if (user) {
-      this.showNotification(`Editing ${user.name}`, 'info');
-      // Here you would typically open an edit modal
+      this.openEditUserModal(user);
     }
+  }
+
+  openEditUserModal(user) {
+    // Populate the form with user data
+    document.getElementById('editUserName').value = user.name || '';
+    document.getElementById('editUserPhone').value = user.phone || '';
+    document.getElementById('editUserAddress').value = user.address || '';
+    document.getElementById('editUserDesc').value = user.description || '';
+    document.getElementById('editUserPoints').value = user.points || 0;
+    document.getElementById('editUserStatus').value = user.status || 'ACTIVE';
+
+    // Store the user ID for the update
+    document.getElementById('editUserForm').dataset.userId = user.id;
+
+    // Show the modal
+    document.getElementById('editUserModal').style.display = 'block';
+  }
+
+  async updateUser(userId, formData) {
+    try {
+      this.showNotification('Updating user...', 'warning');
+      
+      const response = await fetch('/admin/user/edit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          _id: userId,
+          ...formData
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        this.showNotification('User updated successfully!', 'success');
+        
+        // Update the user in the local array
+        const userIndex = this.users.findIndex(u => u.id === userId);
+        if (userIndex !== -1) {
+          this.users[userIndex] = { ...this.users[userIndex], ...formData };
+        }
+        
+        // Refresh the table
+        this.updateTableDisplay();
+        this.closeEditUserModal();
+        
+        // Reload page to show updated data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        const errorData = await response.json();
+        this.showNotification(`Failed to update user: ${errorData.message || 'Unknown error'}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      this.showNotification(`Failed to update user: ${error.message}`, 'error');
+    }
+  }
+
+  closeEditUserModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+    document.getElementById('editUserForm').reset();
   }
 
   async deleteUser(userId) {
@@ -423,8 +486,45 @@ document.addEventListener('DOMContentLoaded', function() {
   if (document.querySelector('.user-table-container')) {
     window.usersManager = new UsersManager();
     console.log('Enhanced Users Management System ready!');
+    
+    // Add event listener for edit form submission
+    const editForm = document.getElementById('editUserForm');
+    if (editForm) {
+      editForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const userId = this.dataset.userId;
+        const formData = {
+          memberNick: document.getElementById('editUserName').value,
+          memberPhone: document.getElementById('editUserPhone').value,
+          memberAddress: document.getElementById('editUserAddress').value,
+          memberDesc: document.getElementById('editUserDesc').value,
+          memberPoints: parseInt(document.getElementById('editUserPoints').value),
+          memberStatus: document.getElementById('editUserStatus').value
+        };
+        
+        window.usersManager.updateUser(userId, formData);
+      });
+    }
+    
+    // Close modal when clicking outside
+    const modal = document.getElementById('editUserModal');
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          window.usersManager.closeEditUserModal();
+        }
+      });
+    }
   }
 });
+
+// Global functions for modal control
+function closeEditUserModal() {
+  if (window.usersManager) {
+    window.usersManager.closeEditUserModal();
+  }
+}
 
 // Export for external use
 window.UsersManager = UsersManager;

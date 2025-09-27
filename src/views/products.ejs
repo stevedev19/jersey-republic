@@ -464,6 +464,138 @@
     </div>
   </div>
 
+  <!-- Edit Product Modal -->
+  <div id="editProductModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Edit Product</h3>
+        <span class="close" onclick="closeEditModal()">&times;</span>
+      </div>
+      <form id="editProductForm" class="edit-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-tshirt"></i>
+              Product Name
+            </label>
+            <input
+              type="text"
+              id="editProductName"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-dollar-sign"></i>
+              Price ($)
+            </label>
+            <input
+              type="number"
+              id="editProductPrice"
+              class="form-input"
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-ruler"></i>
+              Size
+            </label>
+            <select id="editProductSize" class="form-input" required>
+              <option value="S">Small (S)</option>
+              <option value="M">Medium (M)</option>
+              <option value="L">Large (L)</option>
+              <option value="XL">Extra Large (XL)</option>
+              <option value="XXL">2X Large (XXL)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-home"></i>
+              Kit Type
+            </label>
+            <select id="editProductVolume" class="form-input" required>
+              <option value="HOME">Home Kit</option>
+              <option value="AWAY">Away Kit</option>
+              <option value="THIRD">Third Kit</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-trophy"></i>
+              League
+            </label>
+            <select id="editProductCollection" class="form-input" required>
+              <option value="PREMIER_LEAGUE">Premier League</option>
+              <option value="LA_LIGA">La Liga</option>
+              <option value="SERIE_A">Serie A</option>
+              <option value="BUNDESLIGA">Bundesliga</option>
+              <option value="LIGUE_1">Ligue 1</option>
+              <option value="NATIONAL_TEAMS">National Teams</option>
+              <option value="UZBEKISTAN_LEAGUE">Uzbekistan League</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-boxes"></i>
+              Stock Count
+            </label>
+            <input
+              type="number"
+              id="editProductLeftCount"
+              class="form-input"
+              min="0"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-info-circle"></i>
+              Description
+            </label>
+            <textarea
+              id="editProductDesc"
+              class="form-input"
+              rows="3"
+              placeholder="Product description..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-toggle-on"></i>
+              Status
+            </label>
+            <select id="editProductStatus" class="form-input" required>
+              <option value="PROCESS">Active</option>
+              <option value="PAUSE">Paused</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i>
+            Update Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script type="text/javascript" src="/js/products.js"></script>
 </body>
 

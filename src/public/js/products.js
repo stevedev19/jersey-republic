@@ -24,11 +24,12 @@ class ProductsManager {
       return {
         id: row.dataset.productId,
         name: row.querySelector('.product-name').textContent,
-        league: row.querySelector('.league-badge').textContent.trim(),
-        kit: row.querySelector('.kit-badge').textContent.trim(),
+        description: row.querySelector('.product-desc').textContent,
+        collection: row.querySelector('.league-badge').textContent.trim(),
+        volume: row.querySelector('.kit-badge').textContent.trim(),
         size: row.querySelector('.size-badge').textContent.trim(),
         price: parseFloat(row.querySelector('.price-badge').textContent.replace('$', '')),
-        stock: parseInt(row.querySelector('.stock-badge').textContent.trim()) || 0,
+        leftCount: parseInt(row.querySelector('.stock-badge').textContent.trim()) || 0,
         status: statusSelect.value,
         productStatus: statusSelect.value, // Add this for API compatibility
         element: row
@@ -128,8 +129,8 @@ class ProductsManager {
     const term = searchTerm.toLowerCase();
     this.filteredProducts = this.products.filter(product => 
       product.name.toLowerCase().includes(term) ||
-      product.league.toLowerCase().includes(term) ||
-      product.kit.toLowerCase().includes(term)
+      product.collection.toLowerCase().includes(term) ||
+      product.volume.toLowerCase().includes(term)
     );
     this.updateTableDisplay();
   }
@@ -139,7 +140,7 @@ class ProductsManager {
       this.filteredProducts = [...this.products];
     } else {
       this.filteredProducts = this.products.filter(product => 
-        product.league.includes(league)
+        product.collection.includes(league)
       );
     }
     this.updateTableDisplay();
@@ -171,16 +172,16 @@ class ProductsManager {
           bVal = b.name.toLowerCase();
           break;
         case 'league':
-          aVal = a.league.toLowerCase();
-          bVal = b.league.toLowerCase();
+          aVal = a.collection.toLowerCase();
+          bVal = b.collection.toLowerCase();
           break;
         case 'price':
           aVal = a.price;
           bVal = b.price;
           break;
         case 'stock':
-          aVal = a.stock;
-          bVal = b.stock;
+          aVal = a.leftCount;
+          bVal = b.leftCount;
           break;
         case 'status':
           aVal = a.status;
@@ -292,7 +293,7 @@ class ProductsManager {
   updateStats() {
     const totalJerseys = this.products.length;
     const activeJerseys = this.products.filter(p => p.status === 'PROCESS').length;
-    const totalValue = this.products.reduce((sum, p) => sum + (p.price * p.stock), 0);
+    const totalValue = this.products.reduce((sum, p) => sum + (p.price * p.leftCount), 0);
 
     const totalElement = document.getElementById('totalJerseys');
     const activeElement = document.getElementById('activeJerseys');
@@ -336,13 +337,21 @@ class ProductsManager {
   }
 
   editProduct(productId) {
+    console.log('Edit product called with ID:', productId);
+    console.log('Available products:', this.products);
     const product = this.products.find(p => p.id === productId);
+    console.log('Found product:', product);
     if (product) {
       this.openEditModal(product);
+    } else {
+      console.error('Product not found with ID:', productId);
+      this.showNotification('Product not found!', 'error');
     }
   }
 
   openEditModal(product) {
+    console.log('Opening edit modal for product:', product);
+    
     // Populate the form with product data
     document.getElementById('editProductName').value = product.name || '';
     document.getElementById('editProductPrice').value = product.price || '';
@@ -362,6 +371,7 @@ class ProductsManager {
 
   async updateProduct(productId, formData) {
     try {
+      console.log('Updating product:', productId, formData);
       this.showNotification('Updating product...', 'warning');
       
       const response = await fetch(`/admin/product/${productId}`, {
@@ -372,8 +382,11 @@ class ProductsManager {
         body: JSON.stringify(formData),
       });
 
+      console.log('Update response status:', response.status);
+
       if (response.ok) {
         const result = await response.json();
+        console.log('Update result:', result);
         this.showNotification('Product updated successfully!', 'success');
         
         // Update the product in the local array
@@ -382,11 +395,16 @@ class ProductsManager {
           this.products[productIndex] = { ...this.products[productIndex], ...formData };
         }
         
-        // Refresh the table
-        this.renderProducts();
+        // Close modal first
         this.closeEditModal();
+        
+        // Reload page to show updated data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         const errorData = await response.json();
+        console.error('Update failed:', errorData);
         this.showNotification(`Failed to update product: ${errorData.message || 'Unknown error'}`, 'error');
       }
     } catch (error) {
@@ -418,7 +436,7 @@ class ProductsManager {
           // Remove the product from the local array
           this.products = this.products.filter(p => p.id !== productId);
           // Refresh the table
-          this.renderProducts();
+          this.updateTableDisplay();
         } else {
           const errorData = await response.json();
           this.showNotification(`Failed to delete ${product.name}: ${errorData.message || 'Unknown error'}`, 'error');

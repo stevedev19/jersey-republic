@@ -228,6 +228,108 @@
     <% } %>
   </div>
 
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-user-edit"></i> Edit User</h3>
+        <span class="close" onclick="closeEditUserModal()">&times;</span>
+      </div>
+      <form id="editUserForm" class="edit-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-user"></i>
+              Username
+            </label>
+            <input
+              type="text"
+              id="editUserName"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-phone"></i>
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="editUserPhone"
+              class="form-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-map-marker-alt"></i>
+              Address
+            </label>
+            <input
+              type="text"
+              id="editUserAddress"
+              class="form-input"
+              placeholder="User address..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-info-circle"></i>
+              Description
+            </label>
+            <textarea
+              id="editUserDesc"
+              class="form-input"
+              rows="3"
+              placeholder="User description..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-star"></i>
+              Points
+            </label>
+            <input
+              type="number"
+              id="editUserPoints"
+              class="form-input"
+              min="0"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-toggle-on"></i>
+              Status
+            </label>
+            <select id="editUserStatus" class="form-input" required>
+              <option value="ACTIVE">Active</option>
+              <option value="BLOCK">Blocked</option>
+              <option value="DELETE">Deleted</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeEditUserModal()">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i>
+            Update User
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script type="text/javascript" src="/js/users.js"></script>
 </body>
 
