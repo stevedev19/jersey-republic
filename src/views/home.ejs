@@ -1,32 +1,32 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/home.css" />
+<link rel="stylesheet" type="text/css" href="/css/utilities.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
   <div class="home-container">
     <div class="navigation-menu">
       <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link active" href="/admin">Home</a>
         </li>
         <% if(!member) { %>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/signup">Signup</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/login">Login</a>
         </li>
         <% } else { %>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/product/all">Jerseys</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/user/all">Users</a>
         </li>
         <li
-          class="nav-item"
-          style="cursor: pointer"
+          class="nav-item cursor-pointer"
           onclick="return confirm('Do you want to logout?')"
         >
           <a class="nav-link" href="/admin/logout">Logout</a>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Photo Background Container -->
-    <div class="photo-container" style="background-image: url('/img/photo1.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div class="photo-container photo-container-bg">
       <div class="photo-overlay"></div>
     </div>
 
@@ -297,7 +297,7 @@
   </div>
 
   <!-- Notification Container -->
-  <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
+  <div id="notificationContainer" class="notification-container"></div>
 
   <script type="text/javascript" src="/js/home.js"></script>
 </body>

@@ -278,21 +278,23 @@ function initPasswordStrength() {
     
     if (password.length > 0) {
       const indicator = document.createElement('div');
-      indicator.className = 'password-strength';
+      indicator.className = 'password-strength strength-indicator';
       indicator.innerHTML = `
         <div class="strength-bar">
-          <div class="strength-fill" style="width: ${strength.percentage}%; background-color: ${strength.color};"></div>
+          <div class="strength-fill strength-fill-dynamic" data-width="${strength.percentage}" data-color="${strength.color}"></div>
         </div>
-        <span class="strength-text" style="color: ${strength.color};">${strength.text}</span>
-      `;
-      
-      indicator.style.cssText = `
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-        font-weight: 500;
+        <span class="strength-text strength-text-dynamic" data-color="${strength.color}">${strength.text}</span>
       `;
       
       this.parentNode.appendChild(indicator);
+      
+      // Apply dynamic styles using CSS custom properties
+      const fillElement = indicator.querySelector('.strength-fill-dynamic');
+      const textElement = indicator.querySelector('.strength-text-dynamic');
+      
+      fillElement.style.setProperty('--fill-width', `${strength.percentage}%`);
+      fillElement.style.setProperty('--fill-color', strength.color);
+      textElement.style.setProperty('--text-color', strength.color);
     }
   });
 }
@@ -414,7 +416,7 @@ function previewFileHandler(input, index) {
       img.style.border = "2px solid #28a745";
       
       // Update overlay with success state
-      overlay.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745; font-size: 2.5rem;"></i><span style="color: #28a745; font-weight: 600;">Image Selected</span>`;
+      overlay.innerHTML = `<i class="fas fa-check-circle overlay-success-icon-large"></i><span class="overlay-success">Image Selected</span>`;
       overlay.style.background = "rgba(40, 167, 69, 0.1)";
       
       // Add success animation

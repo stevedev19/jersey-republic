@@ -1,6 +1,7 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/users.css" />
+<link rel="stylesheet" type="text/css" href="/css/utilities.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
@@ -8,13 +9,13 @@
     <% if(!member) { %>
     <div class="navigation-menu">
       <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link active" href="/admin/">Home</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/signup">SignUp</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/login">Login</a>
         </li>
       </ul>
@@ -37,18 +38,17 @@
     <% } else { %>
     <div class="navigation-menu">
       <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/">Home</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/product/all">Jerseys</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link active" href="/admin/user/all">Users</a>
         </li>
         <li
-          class="nav-item"
-          style="cursor: pointer"
+          class="nav-item cursor-pointer"
           onclick="return confirm('Do you really want to logout?')"
         >
           <a class="nav-link" href="/admin/logout">Logout</a>
@@ -229,7 +229,7 @@
   </div>
 
   <!-- Edit User Modal -->
-  <div id="editUserModal" class="modal" style="display: none;">
+  <div id="editUserModal" class="modal modal-hidden">
     <div class="modal-content">
       <div class="modal-header">
         <h3><i class="fas fa-user-edit"></i> Edit User</h3>

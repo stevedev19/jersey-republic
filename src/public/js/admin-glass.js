@@ -278,11 +278,15 @@ function showNotification(message, type = 'info') {
     
     notification.innerHTML = `
         <div class="notification-content">
-            <div class="notification-icon" style="color: ${iconColor}">${icon}</div>
+            <div class="notification-icon notification-icon-dynamic" data-color="${iconColor}">${icon}</div>
             <div class="notification-message">${message}</div>
             <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
         </div>
     `;
+    
+    // Apply dynamic color using CSS custom property
+    const iconElement = notification.querySelector('.notification-icon-dynamic');
+    iconElement.style.setProperty('--icon-color', iconColor);
     
     // Style the notification
     Object.assign(notification.style, {

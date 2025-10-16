@@ -1,0 +1,329 @@
+/* Comprehensive Utility Classes for Inline Style Conversion */
+
+/* ===== CURSOR STYLES ===== */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* ===== DISPLAY STYLES ===== */
+.display-none {
+  display: none;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.display-block {
+  display: block;
+}
+
+.display-inline-flex {
+  display: inline-flex;
+}
+
+/* ===== FLEXBOX UTILITIES ===== */
+.justify-content-space-between {
+  justify-content: space-between;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.align-items-flex-end {
+  align-items: flex-end;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
+/* ===== WIDTH AND SIZE UTILITIES ===== */
+.width-13-percent {
+  width: 13%;
+}
+
+.width-650px {
+  width: 650px;
+}
+
+.width-100-percent {
+  width: 100%;
+}
+
+/* ===== MARGIN UTILITIES ===== */
+.margin-bottom-30px {
+  margin-bottom: 30px;
+}
+
+.margin-bottom-25px {
+  margin-bottom: 25px;
+}
+
+.margin-top-25px {
+  margin-top: 25px;
+}
+
+/* ===== BACKGROUND STYLES ===== */
+.background-white {
+  background: white;
+}
+
+.background-image-photo1 {
+  background-image: url('/img/photo1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ===== COLOR UTILITIES ===== */
+.color-dddddd {
+  color: #dddddd;
+}
+
+.color-6440fb {
+  color: #6440fb;
+}
+
+.color-28a745 {
+  color: #28a745;
+}
+
+/* ===== FONT SIZE UTILITIES ===== */
+.font-size-40px {
+  font-size: 40px;
+}
+
+.font-size-2rem {
+  font-size: 2rem;
+}
+
+.font-size-2-5rem {
+  font-size: 2.5rem;
+}
+
+.font-weight-600 {
+  font-weight: 600;
+}
+
+/* ===== POSITION UTILITIES ===== */
+.position-fixed {
+  position: fixed;
+}
+
+.top-20px {
+  top: 20px;
+}
+
+.right-20px {
+  right: 20px;
+}
+
+.z-index-10000 {
+  z-index: 10000;
+}
+
+/* ===== BACKGROUND COLOR UTILITIES ===== */
+.bg-color-28a745 {
+  background-color: #28a745;
+}
+
+/* ===== BORDER RADIUS ===== */
+.border-radius-50 {
+  border-radius: 50%;
+}
+
+/* ===== PADDING UTILITIES ===== */
+.padding-8px-12px {
+  padding: 8px 12px;
+}
+
+/* ===== TEXT ALIGNMENT ===== */
+.text-align-center {
+  text-align: center;
+}
+
+/* ===== OVERFLOW ===== */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* ===== OBJECT FIT ===== */
+.object-fit-cover {
+  object-fit: cover;
+}
+
+/* ===== TRANSITION ===== */
+.transition-all-0-3s {
+  transition: all 0.3s ease;
+}
+
+/* ===== HOVER EFFECTS ===== */
+.hover-scale-1-02:hover {
+  transform: scale(1.02);
+}
+
+.hover-bg-rgba:hover {
+  background: rgba(44, 62, 80, 0.05);
+}
+
+/* ===== SPECIFIC COMPONENT CLASSES ===== */
+.nav-item-interactive {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-item-interactive:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.modal-hidden {
+  display: none;
+}
+
+.modal-visible {
+  display: block;
+}
+
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+.photo-container-bg {
+  background-image: url('/img/photo1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.users-frame-message {
+  color: #dddddd;
+}
+
+.board-message {
+  font-size: 40px;
+}
+
+.header-name-spacing {
+  margin-bottom: 30px;
+}
+
+.table-body-white {
+  background: white;
+}
+
+.product-volume-hidden {
+  display: none;
+}
+
+.long-input-flex {
+  display: flex;
+  align-items: center;
+}
+
+.half-input-flex {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 25px;
+}
+
+.sign-input-frame-flex {
+  justify-content: space-between;
+}
+
+.sign-input-frame-margin {
+  margin-top: 25px;
+  display: flex;
+}
+
+/* ===== DYNAMIC STYLES USING CSS CUSTOM PROPERTIES ===== */
+.strength-fill-dynamic {
+  width: var(--fill-width, 0%);
+  background-color: var(--fill-color, #e5e7eb);
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-text-dynamic {
+  color: var(--text-color, #6b7280);
+  transition: color 0.3s ease;
+}
+
+.notification-icon-dynamic {
+  color: var(--icon-color, #3b82f6);
+  transition: color 0.3s ease;
+}
+
+/* ===== PASSWORD STRENGTH INDICATOR ===== */
+.strength-indicator {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ===== SUCCESS OVERLAY STYLES ===== */
+.overlay-success {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.overlay-success-icon {
+  color: #28a745;
+  font-size: 2rem;
+}
+
+.overlay-success-icon-large {
+  color: #28a745;
+  font-size: 2.5rem;
+}
+
+/* ===== RESPONSIVE UTILITIES ===== */
+@media (max-width: 768px) {
+  .width-650px {
+    width: 100%;
+    max-width: 650px;
+  }
+  
+  .font-size-40px {
+    font-size: 24px;
+  }
+  
+  .margin-bottom-30px {
+    margin-bottom: 20px;
+  }
+  
+  .margin-bottom-25px {
+    margin-bottom: 15px;
+  }
+  
+  .margin-top-25px {
+    margin-top: 15px;
+  }
+}
+
+/* ===== ACCESSIBILITY IMPROVEMENTS ===== */
+.cursor-pointer:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.modal-hidden:focus {
+  outline: none;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}

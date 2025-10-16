@@ -608,7 +608,7 @@ function previewFileHandler(input, index) {
       img.style.border = "2px solid #28a745";
       
       // Update overlay with success state
-      overlay.innerHTML = `<i class="fas fa-check-circle" style="color: #28a745; font-size: 2rem;"></i><span style="color: #28a745; font-weight: 600;">Image Selected</span>`;
+      overlay.innerHTML = `<i class="fas fa-check-circle overlay-success-icon"></i><span class="overlay-success">Image Selected</span>`;
       overlay.style.background = "rgba(40, 167, 69, 0.1)";
       
       // Add success animation

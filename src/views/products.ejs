@@ -1,24 +1,24 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/products.css" />
+<link rel="stylesheet" type="text/css" href="/css/utilities.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
   <div class="products-container">
     <div class="navigation-menu">
       <ul class="nav justify-content-center">
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/">Home</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link active" href="/admin/product/all">Jerseys</a>
         </li>
-        <li class="nav-item" style="cursor: pointer">
+        <li class="nav-item cursor-pointer">
           <a class="nav-link" href="/admin/user/all">Users</a>
         </li>
         <li
-          class="nav-item"
-          style="cursor: pointer"
+          class="nav-item cursor-pointer"
           onclick="return confirm('Do you want to logout?')"
         >
           <a class="nav-link" href="/admin/logout">Logout</a>
@@ -250,10 +250,9 @@
             onsubmit="return validateForm()"
             action="/admin/product/create"
             method="POST"
-            class="product-form"
+            class="product-form display-none"
             enctype="multipart/form-data"
             id="product-form"
-            style="display: none;"
           >
             <div class="form-grid">
               <div class="form-group">
@@ -465,7 +464,7 @@
   </div>
 
   <!-- Edit Product Modal -->
-  <div id="editProductModal" class="modal" style="display: none;">
+  <div id="editProductModal" class="modal modal-hidden">
     <div class="modal-content">
       <div class="modal-header">
         <h3><i class="fas fa-edit"></i> Edit Product</h3>
