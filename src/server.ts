@@ -2,7 +2,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import app from "./app";
+import server from "./app";
 
 // Fix Mongoose deprecation warning
 mongoose.set('strictQuery', false);
@@ -11,7 +11,7 @@ mongoose
   .then((data) => {
     console.log("MongoDB connection succeed");
     const PORT = process.env.PORT ?? 3000;
-    app.listen(PORT, function () {
+    server.listen(PORT, function () {
       console.info(`The server is running succesfully on port: ${PORT}`);
       console.info(`Admin project is on http://localhost:${PORT}/admin \n`);
     });
