@@ -2,5 +2,6 @@ node_modules
 dist
 
 .env
+.env.production
 
 uploadssrc/public/videos/video1.mp4
