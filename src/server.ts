@@ -12,8 +12,8 @@ mongoose
   .connect(process.env.MONGO_URL as string, {})
   .then((data) => {
     console.log("MongoDB connection succeed");
-    const PORT = process.env.PORT ?? 3000;
-    server.listen(PORT, function () {
+    const PORT = Number(process.env.PORT) || 3000;
+    server.listen(PORT, "0.0.0.0", function () {
       console.info(`The server is running succesfully on port: ${PORT}`);
       console.info(`Admin project is on http://localhost:${PORT}/admin \n`);
     });
