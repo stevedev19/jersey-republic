@@ -49,16 +49,10 @@ const result = await this.productModel
 console.log("Raw database result:", result);
 if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-// Transform image URLs to full URLs and filter out non-existent files
+// Return raw image paths - frontend will construct full URLs using serverApi
 const transformedResult = result.map((product: any) => ({
   ...product,
-  productImages: product.productImages?.map((imagePath: string) => 
-    imagePath.startsWith('http') ? imagePath : `http://localhost:3003${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
-  ).filter((url: string) => {
-    // For now, we'll include all URLs and let the frontend handle missing images
-    // In production, you might want to check file existence here
-    return true;
-  }) || []
+  productImages: product.productImages || []
 }));
 
 console.log("Final transformed result:", transformedResult);
@@ -107,17 +101,12 @@ if(!existView) {
   }
 }
 
-// Transform image URLs to full URLs
+// Return raw image paths - frontend will construct full URLs using serverApi
 if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
 const transformedResult = {
   ...result.toObject(),
-  productImages: result.productImages?.map((imagePath: string) => 
-    imagePath.startsWith('http') ? imagePath : `http://localhost:3003${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
-  ).filter((url: string) => {
-    // For now, we'll include all URLs and let the frontend handle missing images
-    return true;
-  }) || []
+  productImages: result.productImages || []
 };
 
 return transformedResult as unknown as Product;
@@ -133,15 +122,10 @@ public async getAllProducts(): Promise<Product[]> {
    const result = await this.productModel.find().exec();
    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-   // Transform image URLs to full URLs
+   // Return raw image paths - frontend will construct full URLs using serverApi
    const transformedResult = result.map((product: any) => ({
      ...product.toObject(),
-     productImages: product.productImages?.map((imagePath: string) => 
-       imagePath.startsWith('http') ? imagePath : `http://localhost:3003${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`
-     ).filter((url: string) => {
-       // For now, we'll include all URLs and let the frontend handle missing images
-       return true;
-     }) || []
+     productImages: product.productImages || []
    }));
 
    console.log("result:", transformedResult);
@@ -162,13 +146,7 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
        const result = await this.productModel.create(input) as unknown as Product;
        console.log("createNewProduct - Database result:", result);
        
-       // Ensure image URLs have proper format for frontend consumption
-       if (result.productImages) {
-         result.productImages = result.productImages.map((imagePath: string) => 
-           imagePath.startsWith('http') ? imagePath : `http://localhost:3003${imagePath}`
-         );
-       }
-       
+       // Return raw image paths - frontend will construct full URLs using serverApi
        console.log("createNewProduct - Final result:", result);
        return result;
       } catch (err) {
