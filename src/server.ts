@@ -1,3 +1,6 @@
+import fs from "fs";
+fs.mkdirSync("./uploads/products", { recursive: true });
+fs.mkdirSync("./uploads/members", { recursive: true });
 
 import dotenv from "dotenv";
 dotenv.config({

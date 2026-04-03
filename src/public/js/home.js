@@ -355,56 +355,60 @@ function initNotifications() {
 function showNotification(message, type = 'success', duration = 3000) {
     const container = document.getElementById('notificationContainer');
     if (!container) return;
-    
+
+    const borderColor = type === 'success' ? 'rgba(34, 197, 94, 0.5)'
+                      : type === 'error'   ? 'rgba(239, 68, 68, 0.5)'
+                      :                      'rgba(59, 130, 246, 0.5)';
+
+    const iconClass = type === 'success' ? 'fa-check-circle'
+                    : type === 'error'   ? 'fa-exclamation-circle'
+                    :                      'fa-info-circle';
+
+    const iconColor = type === 'success' ? '#22c55e'
+                    : type === 'error'   ? '#ef4444'
+                    :                      '#3b82f6';
+
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.style.cssText = `
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(15, 15, 30, 0.85);
         backdrop-filter: blur(20px);
-        border: 2px solid ${type === 'success' ? 'rgba(39, 174, 96, 0.3)' : 
-                          type === 'error' ? 'rgba(231, 76, 60, 0.3)' : 
-                          'rgba(52, 152, 219, 0.3)'};
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid ${borderColor};
         border-radius: 15px;
         padding: 1rem 1.5rem;
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1rem;
-        box-shadow: 0 8px 32px rgba(44, 62, 80, 0.2);
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-        max-width: 300px;
+        color: #fff;
+        font-weight: 500;
+        font-size: 0.95rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        transform: translateX(120%);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        max-width: 320px;
+        min-width: 260px;
         display: flex;
         align-items: center;
         gap: 0.8rem;
     `;
-    
+
     const icon = document.createElement('i');
-    icon.className = `fas ${type === 'success' ? 'fa-check-circle' : 
-                            type === 'error' ? 'fa-exclamation-circle' : 
-                            'fa-info-circle'}`;
-    icon.style.color = type === 'success' ? '#27ae60' : 
-                       type === 'error' ? '#e74c3c' : '#3498db';
-    
+    icon.className = `fas ${iconClass}`;
+    icon.style.cssText = `color: ${iconColor}; font-size: 1.1rem; flex-shrink: 0;`;
+
     const text = document.createElement('span');
     text.textContent = message;
-    
+    text.style.flex = '1';
+
     notification.appendChild(icon);
     notification.appendChild(text);
     container.appendChild(notification);
-    
-    // Animate in
+
+    setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 50);
+
     setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // Auto remove
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
+        notification.style.transform = 'translateX(120%)';
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
+            if (notification.parentNode) notification.parentNode.removeChild(notification);
+        }, 400);
     }, duration);
 }
 

@@ -52,6 +52,7 @@ const memberSchema = new Schema(
     memberDesc: {
       type: String,
     },
+
   },
   { timestamps: true } // updatedAt & createdAt ni qoyib beradi
 );

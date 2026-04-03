@@ -4,4 +4,7 @@ dist
 .env
 .env.production
 
-uploadssrc/public/videos/video1.mp4
+uploads/**
+!uploads/.gitkeep
+!uploads/products/.gitkeep
+!uploads/members/.gitkeep

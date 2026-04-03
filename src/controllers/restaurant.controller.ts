@@ -35,7 +35,7 @@ restaurantController.processSignup = async(req: AdminRequest, res: Response) => 
     
     const newMember: MemberInput = {
       ...req.body,
-      memberImage: file.path.replace(/\\/g, "/"),
+      memberImage: '/' + file.path.replace(/\\/g, "/").replace(/^[./]+/, ''),
       memberType: MemberType.RESTAURANT
     };
     

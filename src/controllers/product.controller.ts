@@ -90,9 +90,10 @@ productController.getProduct = async (req: ExtendedRequest, res: Response) =>{
       console.log("createNewProduct - Data before processing:", data);
       
       data.productImages = req.files?.map((ele) => {
-          const path = ele.path.replace(/\\/g, "/");
-          // Convert to relative path for proper serving
-          const relativePath = path.replace(/^.*\/uploads\//, "/uploads/");
+          const filePath = ele.path.replace(/\\/g, "/");
+          // Extract the uploads/... portion and prepend /
+          const match = filePath.match(/(uploads\/.+)/);
+          const relativePath = match ? '/' + match[1] : filePath;
           console.log("createNewProduct - Image path:", relativePath);
           return relativePath;
       });

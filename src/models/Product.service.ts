@@ -49,10 +49,11 @@ const result = await this.productModel
 console.log("Raw database result:", result);
 if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-// Return raw image paths - frontend will construct full URLs using serverApi
 const transformedResult = result.map((product: any) => ({
   ...product,
-  productImages: product.productImages || []
+  productImages: (product.productImages || []).map((p: string) =>
+    p.startsWith('http') || p.startsWith('/') ? p : '/' + p
+  ),
 }));
 
 console.log("Final transformed result:", transformedResult);
@@ -106,7 +107,9 @@ if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
 const transformedResult = {
   ...result.toObject(),
-  productImages: result.productImages || []
+  productImages: (result.productImages || []).map((p: string) =>
+    p.startsWith('http') || p.startsWith('/') ? p : '/' + p
+  ),
 };
 
 return transformedResult as unknown as Product;
@@ -122,10 +125,11 @@ public async getAllProducts(): Promise<Product[]> {
    const result = await this.productModel.find().exec();
    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-   // Return raw image paths - frontend will construct full URLs using serverApi
    const transformedResult = result.map((product: any) => ({
      ...product.toObject(),
-     productImages: product.productImages || []
+     productImages: (product.productImages || []).map((p: string) =>
+       p.startsWith('http') || p.startsWith('/') ? p : '/' + p
+     ),
    }));
 
    console.log("result:", transformedResult);

@@ -68,7 +68,7 @@ memberController.login = async (req: Request, res: Response) => {
 memberController.logout = (req: ExtendedRequest, res: Response) =>{
   try{
     console.log("logout");
-    res.cookie("accessToken", null, {maxAge: 0, httpOnly:true})
+    res.clearCookie("accessToken")
     res.status(HttpCode.OK).json({ logout:true });
 
   } catch (err){
@@ -95,7 +95,7 @@ memberController.updateMember = async(req: ExtendedRequest, res: Response) =>{
   try{
     console.log("updateMember");
     const input : MemberUpdateInput = req.body;
-    if(req.file) input.memberImage = req.file.path.replace(/\\/, "/");
+    if(req.file) input.memberImage = '/' + req.file.path.replace(/\\/g, "/").replace(/^[./]+/, '');
     const result = await memberService.updateMember(req.member, input)
      
     res.status(HttpCode.OK).json(result)
@@ -123,30 +123,38 @@ memberController.getTopUsers = async (req: Request, res: Response) => {
 
 memberController.verifyAuth = async (
   req: ExtendedRequest,
-  res: Response, 
+  res: Response,
  next: NextFunction
 ) => {
 try {
-  const token = req.cookies["accessToken"];
+  const token =
+    req.cookies["accessToken"] ||
+    (req.headers.authorization?.startsWith("Bearer ")
+      ? req.headers.authorization.slice(7)
+      : null);
   if(token) req.member = await authService.checkAuth(token);
-  if (!req.member) 
+  if (!req.member)
     throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED);
 
   next();
 } catch (err) {
  console.log("Error, verifyAuth", err);
     if (err instanceof Errors) res.status(err.code).json(err);
-    else res.status(Errors.standard.code).json(Errors.standard);
+    else res.status(HttpCode.UNAUTHORIZED).json(new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED));
     }
 };
 
 memberController.retrieveAuth = async (
   req: ExtendedRequest,
-  res: Response, 
+  res: Response,
   next: NextFunction
 ) => {
 try {
-  const token = req.cookies["accessToken"];
+  const token =
+    req.cookies["accessToken"] ||
+    (req.headers.authorization?.startsWith("Bearer ")
+      ? req.headers.authorization.slice(7)
+      : null);
   if(token) req.member = await authService.checkAuth(token);
 
   next();
