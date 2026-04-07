@@ -28,8 +28,9 @@ router.get("/member/top-users", memberController.getTopUsers)
 
 /** Product **/
 router.get("/product/all", productController.getProducts);
+router.get("/product/new-drops", productController.getNewDrops);
 router.get(
-    "/product/:id", 
+    "/product/:id",
     memberController.retrieveAuth,
     productController.getProduct
  );
@@ -55,9 +56,11 @@ router.post(
 
 /** Frontend API Routes **/
 router.get("/api/products", productController.getProducts);
+router.get("/api/products/new-drops", productController.getNewDrops);
 router.get("/api/products/:id",
     memberController.retrieveAuth,
     productController.getProduct
 );
+router.put("/api/products/:id", productController.updateChosenProduct);
 
 export default router;

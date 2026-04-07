@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { ProductCollection, ProductSize, ProductStatus, ProductVolume, } from "../libs/enums/product.enum";
+import { getDropWindow } from "../libs/utils/dropWindow";
 
 const productSchema = new Schema(
     {
@@ -70,10 +71,33 @@ const productSchema = new Schema(
         type: String,
       },
 
+      uniformSeason: {
+        type: String,
+        default: null,
+      },
+
+      madeYear: {
+        type: Number,
+        required: false,
+        min: 1900,
+        max: new Date().getFullYear(),
+      },
+
     },
     { timestamps: true } //updateAt, createAt
   );
 
+  productSchema.virtual("isNewDrop").get(function (this: { madeYear?: number }) {
+    if (this.madeYear == null) return false;
+    const { startYear, endYear, windowStart, windowEnd } = getDropWindow();
+    const now = new Date();
+    return (
+      this.madeYear >= startYear &&
+      this.madeYear <= endYear &&
+      now >= windowStart &&
+      now <= windowEnd
+    );
+  });
 
   productSchema.index(
     {productName: 1, productSize: 1, productVolume: 1, teamName: 1}, 

@@ -18,7 +18,7 @@ const productController: T = {};
   productController.getProducts = async(req: Request, res: Response) => {
   try {
     console.log("getProducts");
-    const {page, limit, order, productCollection, search} = req.query;
+    const {page, limit, order, productCollection, search, filter} = req.query;
     const inquiry: ProductInquiry = {
       order: String(order) || "createdAt",
       page: Number(page) || 1,
@@ -28,6 +28,7 @@ const productController: T = {};
       inquiry.productCollection = productCollection as ProductCollection;
     }
     if(search) inquiry.search = String(search);
+    if(filter) inquiry.filter = String(filter);
     
      const result = await productService.getProducts(inquiry);
     // console.log(`page: ${page}, order: ${order} `);
@@ -53,6 +54,18 @@ productController.getProduct = async (req: ExtendedRequest, res: Response) =>{
     console.log("Error, getProduct:", err);
     if(err instanceof Errors) res.status(err.code).json(err)
       else res.status(Errors.standard.code).json(Errors.standard);
+  }
+};
+
+productController.getNewDrops = async (_req: Request, res: Response) => {
+  try {
+    console.log("getNewDrops");
+    const { products, window } = await productService.getNewDrops();
+    res.status(HttpCode.OK).json({ products, window });
+  } catch (err) {
+    console.log("Error, getNewDrops", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
+    else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
 

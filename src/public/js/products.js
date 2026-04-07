@@ -31,7 +31,8 @@ class ProductsManager {
         price: parseFloat(row.querySelector('.price-badge').textContent.replace('$', '')),
         leftCount: parseInt(row.querySelector('.stock-badge').textContent.trim()) || 0,
         status: statusSelect.value,
-        productStatus: statusSelect.value, // Add this for API compatibility
+        productStatus: statusSelect.value,
+        madeYear: row.dataset.madeYear ? parseInt(row.dataset.madeYear) : null,
         element: row
       };
     });
@@ -361,6 +362,7 @@ class ProductsManager {
     document.getElementById('editProductLeftCount').value = product.leftCount || '';
     document.getElementById('editProductDesc').value = product.description || '';
     document.getElementById('editProductStatus').value = product.status || 'PROCESS';
+    document.getElementById('editMadeYear').value = product.madeYear || '';
 
     // Store the product ID for the update
     document.getElementById('editProductForm').dataset.productId = product.id;
@@ -647,6 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         const productId = this.dataset.productId;
+        const madeYearRaw = document.getElementById('editMadeYear').value;
         const formData = {
           productName: document.getElementById('editProductName').value,
           productPrice: parseFloat(document.getElementById('editProductPrice').value),
@@ -655,7 +658,8 @@ document.addEventListener('DOMContentLoaded', function() {
           productCollection: document.getElementById('editProductCollection').value,
           productLeftCount: parseInt(document.getElementById('editProductLeftCount').value),
           productDesc: document.getElementById('editProductDesc').value,
-          productStatus: document.getElementById('editProductStatus').value
+          productStatus: document.getElementById('editProductStatus').value,
+          ...(madeYearRaw !== '' && { madeYear: parseInt(madeYearRaw) }),
         };
         
         window.productsManager.updateProduct(productId, formData);

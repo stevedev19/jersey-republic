@@ -151,7 +151,7 @@
               </thead>
               <tbody>
                 <% products.map(function(value, key){ %>
-                <tr class="product-row" data-product-id="<%= value._id%>">
+                <tr class="product-row" data-product-id="<%= value._id%>" data-made-year="<%= value.madeYear || '' %>">
                   <td class="product-number">
                     <span class="number-badge"><%= key + 1 %></span>
                   </td>
@@ -353,6 +353,24 @@
                   <option value="SPECIAL">Special Edition</option>
                 </select>
               </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-calendar-alt"></i>
+                Jersey Made Year
+              </label>
+              <input
+                type="number"
+                name="madeYear"
+                class="form-input"
+                min="1900"
+                max="2040"
+                placeholder="e.g. 2025"
+              />
+              <small style="color:#aaa;font-size:0.78rem;">
+                Jerseys from 2025–2026 appear in New Drops automatically
+              </small>
             </div>
 
             <div class="form-group full-width">
@@ -578,6 +596,24 @@
               <option value="PROCESS">Active</option>
               <option value="PAUSE">Paused</option>
             </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-calendar-alt"></i>
+              Jersey Made Year
+            </label>
+            <input
+              type="number"
+              id="editMadeYear"
+              class="form-input"
+              min="1900"
+              max="2040"
+              placeholder="e.g. 2025"
+            />
+            <small style="color:#aaa;font-size:0.78rem;">
+              Jerseys from 2025–2026 appear in New Drops automatically
+            </small>
           </div>
         </div>
 

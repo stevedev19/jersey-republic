@@ -8,6 +8,7 @@ import { ObjectId } from "mongoose";
 import ViewService from "./View.service";
 import { ViewInput } from "../libs/types/view";
 import { ViewGroup } from "../libs/enums/view.enum";
+import { getDropWindow } from "../libs/utils/dropWindow";
 
 
 class ProductService {
@@ -28,6 +29,10 @@ if(inquiry.productCollection)
    match.productCollection = inquiry.productCollection;
 if(inquiry.search) {
     match.productName = {$regex: new RegExp(inquiry.search, "i")}
+}
+if(inquiry.filter === "NEW_DROPS") {
+    const { startYear, endYear } = getDropWindow();
+    match.madeYear = { $gte: startYear, $lte: endYear };
 }
 
 const sort: T =
@@ -172,6 +177,32 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 
    return result as unknown as Product;
+  }
+
+  public async getNewDrops(): Promise<{
+    products: Product[];
+    window: ReturnType<typeof getDropWindow>;
+  }> {
+    const dropWindow = getDropWindow();
+    const { startYear, endYear } = dropWindow;
+
+    const result = await this.productModel
+      .find({
+        madeYear: { $gte: startYear, $lte: endYear },
+        productStatus: { $in: [ProductStatus.PROCESS, ProductStatus.PAUSE] },
+      })
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .exec();
+
+    const products = result.map((product: any) => ({
+      ...product.toObject(),
+      productImages: (product.productImages || []).map((p: string) =>
+        p.startsWith("http") || p.startsWith("/") ? p : "/" + p
+      ),
+    })) as unknown as Product[];
+
+    return { products, window: dropWindow };
   }
 
   public async deleteChosenProduct(id: string): Promise<Product> {

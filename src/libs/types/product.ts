@@ -21,6 +21,9 @@ export interface Product{
     teamName?: string;
     season?: string;
     playerName?: string;
+    uniformSeason?: string | null;
+    madeYear?: number;
+    isNewDrop?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -31,6 +34,7 @@ export interface ProductInquiry {
     limit: number;
     productCollection?:ProductCollection;
     search?: string;
+    filter?: string;
 }
 
 export interface ProductInput {
@@ -47,6 +51,8 @@ export interface ProductInput {
     teamName?: string;
     season?: string;
     playerName?: string;
+    uniformSeason?: string | null;
+    madeYear?: number;
 }
 
 export interface ProductUpdateInput {
@@ -64,4 +70,6 @@ export interface ProductUpdateInput {
     teamName?: string;
     season?: string;
     playerName?: string;
+    uniformSeason?: string | null;
+    madeYear?: number;
 }
