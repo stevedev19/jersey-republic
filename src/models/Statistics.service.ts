@@ -29,7 +29,8 @@ class StatisticsService {
         activeProducts,
         totalOrders,
         todayOrders,
-        totalRevenue
+        totalRevenue,
+        inventoryRetailValue
       ] = await Promise.all([
         this.getTotalUsers(),
         this.getActiveUsers(),
@@ -38,7 +39,8 @@ class StatisticsService {
         this.getActiveProducts(),
         this.getTotalOrders(),
         this.getTodayOrders(),
-        this.getTotalRevenue()
+        this.getTotalRevenue(),
+        this.getInventoryRetailValue()
       ]);
 
       return {
@@ -57,6 +59,9 @@ class StatisticsService {
         },
         revenue: {
           total: totalRevenue
+        },
+        inventory: {
+          retailValue: inventoryRetailValue
         },
         lastUpdated: new Date().toISOString()
       };
@@ -151,6 +156,21 @@ class StatisticsService {
       }, 0);
     } catch (error) {
       console.error('Error getting total revenue:', error);
+      return 0;
+    }
+  }
+
+  /** Sum of productPrice × productLeftCount across all jerseys (inventory at retail). */
+  private async getInventoryRetailValue(): Promise<number> {
+    try {
+      const products = await this.productService.getAllProducts();
+      return products.reduce((sum, p) => {
+        const price = Number(p.productPrice) || 0;
+        const qty = Number(p.productLeftCount) || 0;
+        return sum + price * qty;
+      }, 0);
+    } catch (error) {
+      console.error('Error getting inventory retail value:', error);
       return 0;
     }
   }

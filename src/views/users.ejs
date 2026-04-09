@@ -1,25 +1,47 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/users.css" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" />
 <link rel="stylesheet" type="text/css" href="/css/utilities.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
-  <div class="users-container">
-    <% if(!member) { %>
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link active" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/signup">SignUp</a>
-        </li>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/login">Login</a>
-        </li>
-      </ul>
-    </div>
+<% 
+  var userAvatarPalette = [
+    { bg: '#dde8f5', color: '#185FA5' },
+    { bg: '#e8f0e0', color: '#3B6D11' },
+    { bg: '#f0e8f5', color: '#534AB7' },
+    { bg: '#f5ede8', color: '#712B13' },
+    { bg: '#e8f5f0', color: '#0F6E56' },
+    { bg: '#f5f0e8', color: '#633806' }
+  ];
+  function userInitials(nick) {
+    if (!nick) return '?';
+    var s = String(nick).trim();
+    if (!s.length) return '?';
+    return s.length >= 2 ? s.substring(0, 2).toUpperCase() : s.substring(0, 1).toUpperCase();
+  }
+%>
+  <% if(!member) { %>
+  <div class="users-container admin-public-home">
+    <header class="admin-home-navbar">
+      <div class="admin-home-navbar__inner">
+        <nav class="admin-jersey-navigation" aria-label="Admin">
+          <ul class="nav admin-jersey-navlist justify-content-center">
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin">Home</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin/signup">Signup</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin/login">Login</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="admin-home-clock" aria-hidden="true"></div>
+      </div>
+    </header>
 
     <div class="users-frame">
       <div class="login-prompt">
@@ -34,83 +56,82 @@
         </a>
       </div>
     </div>
+  </div>
 
-    <% } else { %>
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/">Home</a>
-        </li>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/product/all">Jerseys</a>
-        </li>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link active" href="/admin/user/all">Users</a>
-        </li>
-        <li
-          class="nav-item cursor-pointer"
-          onclick="return confirm('Do you really want to logout?')"
-        >
-          <a class="nav-link" href="/admin/logout">Logout</a>
-        </li>
-      </ul>
-    </div>
+  <% } else { %>
+  <div class="users-container admin-jersey-dashboard">
+    <header class="admin-jersey-topnav">
+      <div class="admin-jersey-topnav__inner">
+        <nav class="navigation-menu admin-jersey-navigation" aria-label="Admin">
+          <ul class="nav admin-jersey-navlist justify-content-center">
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin">Home</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin/product/all">Jerseys</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link active" href="/admin/user/all">Users</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link js-admin-logout" href="/admin/logout">Logout</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="admin-home-clock">
+          <div class="live-clock" id="adminTopnavClock">--:--:--</div>
+          <div class="clock-label">Current time</div>
+        </div>
+      </div>
+    </header>
 
-    <div class="users-frame">
+    <div class="users-dashboard-shell">
       <div class="board">
-        <!-- Enhanced Header Section -->
-        <div class="page-header">
-          <div class="header-content">
-            <div class="header-icon">
+        <div class="admin-hero">
+          <div class="admin-hero-left">
+            <div class="admin-hero-icon" aria-hidden="true">
               <i class="fas fa-users"></i>
             </div>
-            <div class="header-text">
-              <h1 class="page-title">User Management</h1>
-              <p class="page-subtitle">Manage user accounts and permissions</p>
-            </div>
-          </div>
-          <div class="header-stats">
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="fas fa-user-check"></i>
-              </div>
-              <div class="stat-content">
-                <span class="stat-number" id="activeUsers">0</span>
-                <span class="stat-label">Active Users</span>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="fas fa-user-times"></i>
-              </div>
-              <div class="stat-content">
-                <span class="stat-number" id="blockedUsers">0</span>
-                <span class="stat-label">Blocked Users</span>
-              </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <div class="stat-content">
-                <span class="stat-number" id="totalUsers">0</span>
-                <span class="stat-label">Total Users</span>
-              </div>
+            <div>
+              <h1>User management</h1>
+              <p>Manage user accounts and permissions</p>
             </div>
           </div>
         </div>
 
-        <!-- Enhanced User Table -->
-        <div class="user-table-container">
-          <div class="table-header">
-            <h3 class="table-title">
-              <i class="fas fa-list"></i>
-              All Users List
-            </h3>
+        <div class="admin-stats-grid admin-stats-grid--users">
+          <div class="admin-stat admin-stat--u-active">
+            <div class="admin-stat-icon"><i class="fas fa-user-check"></i></div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-label">Active Users</span>
+              <p class="admin-stat-num" id="activeUsers">0</p>
+              <p class="admin-stat-delta admin-stat-delta--u-active">100% active rate</p>
+            </div>
+          </div>
+          <div class="admin-stat admin-stat--u-blocked">
+            <div class="admin-stat-icon"><i class="fas fa-user-slash"></i></div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-label">Blocked Users</span>
+              <p class="admin-stat-num" id="blockedUsers">0</p>
+              <p class="admin-stat-delta admin-stat-delta--u-blocked" id="blockedUsersDelta">No blocks active</p>
+            </div>
+          </div>
+          <div class="admin-stat admin-stat--u-total">
+            <div class="admin-stat-icon"><i class="fas fa-users"></i></div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-label">Total Users</span>
+              <p class="admin-stat-num" id="totalUsers">0</p>
+              <p class="admin-stat-delta admin-stat-delta--u-total">↑ 2 this week</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-table-container users-page-table">
+          <div class="table-toolbar-users">
+            <h3>All users</h3>
             <div class="table-controls">
               <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="userSearch" placeholder="Search users...">
+                <input type="text" id="userSearch" placeholder="Search users..." aria-label="Search users">
               </div>
               <div class="filter-dropdown">
                 <select id="statusFilter" class="filter-select">
@@ -127,92 +148,86 @@
             <table class="modern-table">
               <thead>
                 <tr>
-                  <th class="sortable" data-sort="index">
-                    <i class="fas fa-hashtag"></i>
-                    No
-                  </th>
-                  <th class="sortable" data-sort="name">
-                    <i class="fas fa-user"></i>
-                    Name
-                  </th>
-                  <th class="sortable" data-sort="phone">
-                    <i class="fas fa-phone"></i>
-                    Phone
-                  </th>
-                  <th class="sortable" data-sort="points">
-                    <i class="fas fa-star"></i>
-                    Points
-                  </th>
-                  <th class="sortable" data-sort="status">
-                    <i class="fas fa-toggle-on"></i>
-                    Status
-                  </th>
-                  <th class="actions-column">
-                    <i class="fas fa-cogs"></i>
-                    Actions
-                  </th>
+                  <th class="sortable th-index" data-sort="index">#</th>
+                  <th class="sortable" data-sort="name">Name</th>
+                  <th class="sortable" data-sort="phone">Phone</th>
+                  <th class="sortable th-col-center" data-sort="points">Points</th>
+                  <th class="sortable th-col-center" data-sort="status">Status</th>
+                  <th class="actions-column th-col-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <% users.map(function(value, index){%>
-                <tr class="user-row" data-user-id="<%= value._id%>">
+                <% users.map(function(value, index){
+                  var av = userAvatarPalette[index % userAvatarPalette.length];
+                  var initials = userInitials(value.memberNick);
+                %>
+                <tr
+                  class="user-row"
+                  data-user-id="<%= value._id %>"
+                  data-member-status="<%= value.memberStatus %>"
+                  data-member-phone="<%= value.memberPhone %>"
+                  data-member-address="<%= (value.memberAddress || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;') %>"
+                  data-member-desc="<%= (value.memberDesc || '').replace(/"/g, '&quot;').replace(/'/g, '&#39;') %>"
+                >
                   <td class="user-number">
-                    <span class="number-badge"><%= index+1 %></span>
+                    <span class="row-num"><%= index + 1 %></span>
                   </td>
                   <td class="user-info">
-                    <div class="user-avatar">
+                    <div class="user-avatar" style="background: <%= av.bg %>; color: <%= av.color %>;">
                       <% if(value.memberImage) { %>
-                        <img src="/<%= value.memberImage %>" alt="<%= value.memberNick %>" class="avatar-img">
+                        <img src="/<%= value.memberImage %>" alt="<%= value.memberNick %>">
                       <% } else { %>
-                        <div class="avatar-placeholder">
-                          <i class="fas fa-user"></i>
-                        </div>
+                        <%= initials %>
                       <% } %>
                     </div>
                     <div class="user-details">
                       <span class="user-name"><%= value.memberNick %></span>
                       <% if(value.memberAddress) { %>
                         <span class="user-location">
-                          <i class="fas fa-map-marker-alt"></i>
+                          <svg viewBox="0 0 24 24" aria-hidden="true"><path stroke="currentColor" fill="none" stroke-width="2" d="M12 21s7-4.5 7-10a7 7 0 10-14 0c0 5.5 7 10 7 10z"/><circle cx="12" cy="11" r="2.5" stroke="currentColor" fill="none" stroke-width="2"/></svg>
                           <%= value.memberAddress %>
                         </span>
                       <% } %>
                     </div>
                   </td>
                   <td class="user-phone">
-                    <a href="tel:<%= value.memberPhone %>" class="phone-link">
-                      <i class="fas fa-phone"></i>
-                      <%= value.memberPhone %>
-                    </a>
+                    <a href="tel:<%= value.memberPhone %>" class="phone-link"><%= value.memberPhone %></a>
                   </td>
                   <td class="user-points">
                     <span class="points-badge">
                       <i class="fas fa-star"></i>
-                      <%= value.memberPoints || 0 %>
+                      <span class="points-value"><%= value.memberPoints || 0 %></span>
                     </span>
                   </td>
                   <td class="status-cell">
-                    <select class="status-select member-status" id="<%= value._id%>">
-                      <option value="ACTIVE" <%= value.memberStatus === 'ACTIVE' ? 'selected': ''%>>
-                        <i class="fas fa-check-circle"></i> Active
-                      </option>
-                      <option value="BLOCK" <%= value.memberStatus === 'BLOCK' ? 'selected': ''%>>
-                        <i class="fas fa-ban"></i> Blocked
-                      </option>
-                      <option value="DELETE" <%= value.memberStatus === 'DELETE' ? 'selected': ''%>>
-                        <i class="fas fa-trash"></i> Deleted
-                      </option>
-                    </select>
+                    <% if (value.memberStatus === 'DELETE') { %>
+                      <span class="user-status-pill user-status-pill--deleted">Deleted</span>
+                    <% } else { %>
+                      <div class="toggle-wrap">
+                        <label class="toggle">
+                          <input
+                            type="checkbox"
+                            class="member-status-toggle"
+                            data-user-id="<%= value._id %>"
+                            <%= value.memberStatus === 'ACTIVE' ? 'checked' : '' %>
+                          >
+                          <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label <%= value.memberStatus === 'ACTIVE' ? 'is-active' : 'is-blocked' %>">
+                          <%= value.memberStatus === 'ACTIVE' ? 'Active' : 'Blocked' %>
+                        </span>
+                      </div>
+                    <% } %>
                   </td>
                   <td class="actions-cell">
                     <div class="action-buttons">
-                      <button class="action-btn view-btn" onclick="viewUser('<%= value._id%>')" title="View Details">
+                      <button type="button" class="icon-btn view view-btn" title="View user">
                         <i class="fas fa-eye"></i>
                       </button>
-                      <button class="action-btn edit-btn" onclick="editUser('<%= value._id%>')" title="Edit User">
+                      <button type="button" class="icon-btn edit edit-btn" title="Edit user">
                         <i class="fas fa-edit"></i>
                       </button>
-                      <button class="action-btn delete-btn" onclick="deleteUser('<%= value._id%>')" title="Delete User">
+                      <button type="button" class="icon-btn del delete-btn" title="Delete user">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>
@@ -225,8 +240,8 @@
         </div>
       </div>
     </div>
-    <% } %>
   </div>
+  <% } %>
 
   <!-- Edit User Modal -->
   <div id="editUserModal" class="modal modal-hidden">
@@ -330,6 +345,7 @@
     </div>
   </div>
 
+  <script type="text/javascript" src="/js/admin-topnav-clock.js"></script>
   <script type="text/javascript" src="/js/users.js"></script>
 </body>
 

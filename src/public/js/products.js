@@ -17,22 +17,33 @@ class ProductsManager {
   }
 
   loadProducts() {
-    // Extract products from the table rows
+    // Extract products from the table rows (human-readable cells + raw codes in data attrs)
     const rows = document.querySelectorAll('.product-row');
-    this.products = Array.from(rows).map(row => {
+    this.products = Array.from(rows).map((row, rowOrder) => {
       const statusSelect = row.querySelector('.status-select');
+      const priceEl = row.querySelector('.price-value');
+      const priceText = priceEl ? priceEl.textContent : '0';
+      const stockRaw = row.dataset.productStock;
+      const leftParsed =
+        stockRaw !== undefined && stockRaw !== ''
+          ? parseInt(stockRaw, 10)
+          : parseInt(row.querySelector('.stock-value')?.textContent.trim() || '0', 10) || 0;
       return {
         id: row.dataset.productId,
-        name: row.querySelector('.product-name').textContent,
-        description: row.querySelector('.product-desc').textContent,
-        collection: row.querySelector('.league-badge').textContent.trim(),
-        volume: row.querySelector('.kit-badge').textContent.trim(),
-        size: row.querySelector('.size-badge').textContent.trim(),
-        price: parseFloat(row.querySelector('.price-badge').textContent.replace('$', '')),
-        leftCount: parseInt(row.querySelector('.stock-badge').textContent.trim()) || 0,
+        name: row.querySelector('.product-name')?.textContent.trim() || '',
+        description: row.querySelector('.product-desc')?.textContent || '',
+        collection: row.dataset.productCollection || '',
+        collectionLabel:
+          row.querySelector('.league-text')?.textContent.trim() || '',
+        volume: row.dataset.productVolume || '',
+        volumeLabel: row.querySelector('.kit-text')?.textContent.trim() || '',
+        size: row.querySelector('.size-badge')?.textContent.trim() || '',
+        price: parseFloat(String(priceText).replace(/[^0-9.]/g, '')) || 0,
+        leftCount: Number.isFinite(leftParsed) ? leftParsed : 0,
         status: statusSelect.value,
         productStatus: statusSelect.value,
-        madeYear: row.dataset.madeYear ? parseInt(row.dataset.madeYear) : null,
+        madeYear: row.dataset.madeYear ? parseInt(row.dataset.madeYear, 10) : null,
+        rowOrder,
         element: row
       };
     });
@@ -111,16 +122,14 @@ class ProductsManager {
     if (toggleBtn && form) {
       toggleBtn.addEventListener('click', () => {
         form.style.display = form.style.display === 'none' ? 'grid' : 'none';
-        toggleBtn.innerHTML = form.style.display === 'none' ? 
-          '<i class="fas fa-plus"></i> New Product' : 
-          '<i class="fas fa-minus"></i> Hide Form';
+        toggleBtn.textContent = form.style.display === 'none' ? 'New Product' : 'Hide form';
       });
     }
 
     if (cancelBtn && form) {
       cancelBtn.addEventListener('click', () => {
         form.style.display = 'none';
-        toggleBtn.innerHTML = '<i class="fas fa-plus"></i> New Product';
+        toggleBtn.textContent = 'New Product';
         form.reset();
       });
     }
@@ -130,8 +139,10 @@ class ProductsManager {
     const term = searchTerm.toLowerCase();
     this.filteredProducts = this.products.filter(product => 
       product.name.toLowerCase().includes(term) ||
-      product.collection.toLowerCase().includes(term) ||
-      product.volume.toLowerCase().includes(term)
+      (product.collection || '').toLowerCase().includes(term) ||
+      (product.collectionLabel || '').toLowerCase().includes(term) ||
+      (product.volume || '').toLowerCase().includes(term) ||
+      (product.volumeLabel || '').toLowerCase().includes(term)
     );
     this.updateTableDisplay();
   }
@@ -141,7 +152,7 @@ class ProductsManager {
       this.filteredProducts = [...this.products];
     } else {
       this.filteredProducts = this.products.filter(product => 
-        product.collection.includes(league)
+        (product.collection || '') === league
       );
     }
     this.updateTableDisplay();
@@ -168,6 +179,10 @@ class ProductsManager {
       let aVal, bVal;
       
       switch (column) {
+        case 'index':
+          aVal = a.rowOrder;
+          bVal = b.rowOrder;
+          break;
         case 'name':
           aVal = a.name.toLowerCase();
           bVal = b.name.toLowerCase();
@@ -175,6 +190,14 @@ class ProductsManager {
         case 'league':
           aVal = a.collection.toLowerCase();
           bVal = b.collection.toLowerCase();
+          break;
+        case 'kit':
+          aVal = (a.volume || '').toLowerCase();
+          bVal = (b.volume || '').toLowerCase();
+          break;
+        case 'size':
+          aVal = (a.size || '').toLowerCase();
+          bVal = (b.size || '').toLowerCase();
           break;
         case 'price':
           aVal = a.price;
@@ -202,12 +225,16 @@ class ProductsManager {
   }
 
   updateTableDisplay() {
-    const tbody = document.querySelector('.modern-table tbody');
+    const tbody =
+      document.querySelector('.modern-table--jerseys tbody') ||
+      document.querySelector('.modern-table tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
     this.filteredProducts.forEach((product, index) => {
       const row = product.element.cloneNode(true);
-      row.querySelector('.number-badge').textContent = index + 1;
+      const idxEl = row.querySelector('.product-index');
+      if (idxEl) idxEl.textContent = String(index + 1);
       tbody.appendChild(row);
     });
 
@@ -368,7 +395,7 @@ class ProductsManager {
     document.getElementById('editProductForm').dataset.productId = product.id;
 
     // Show the modal
-    document.getElementById('editProductModal').style.display = 'block';
+    document.getElementById('editProductModal').style.display = 'flex';
   }
 
   async updateProduct(productId, formData) {

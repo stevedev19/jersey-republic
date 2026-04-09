@@ -1,71 +1,35 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/login.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
-  <div class="login-container">
-    <!-- Enhanced Header Section -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon">
-          <i class="fas fa-sign-in-alt"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">Welcome Back</h1>
-          <p class="page-subtitle">Sign in to Jersey Republic Management System</p>
-        </div>
-      </div>
-      <div class="back-link">
-        <a href="/admin" class="back-btn">
-          <i class="fas fa-arrow-left"></i>
-          Back to Home
-        </a>
-      </div>
-    </div>
+  <div class="login-page">
+    <a href="/admin" class="login-page__back">Back</a>
 
-    <form class="login-form" action="/admin/login" METHOD="POST" onsubmit="return validateLoginForm()">
-      <div class="login-frame">
-        <!-- Navigation Links -->
-        <div class="login-top">
-          <div class="nav-links">
-            <span class="nav-text">Don't have an account?</span>
-            <a href="/admin/signup" class="nav-link">
-              <i class="fas fa-user-plus"></i>
-              Create Account
-            </a>
-          </div>
-        </div>
+    <div class="login-page__main">
+      <form class="login-form" action="/admin/login" METHOD="POST" onsubmit="return validateLoginForm()">
+        <div class="login-card">
+          <p class="login-card__eyebrow">Jersey Republic</p>
+          <h1 class="login-card__title">Sign in to your account</h1>
 
-        <!-- Form Section -->
-        <div class="form-section">
-          <h3 class="section-title">
-            <i class="fas fa-lock"></i>
-            Login Credentials
-          </h3>
-          
-          <div class="login-input-frame">
-            <div class="login-input-container">
-              <label class="form-label">
-                <i class="fas fa-store"></i>
-                Restaurant Name *
-              </label>
+          <div class="login-card__fields">
+            <div class="login-field">
+              <label class="login-field__label" for="login-username">Username</label>
               <input
+                id="login-username"
                 type="text"
                 name="memberNick"
                 class="member-nick form-input"
-                placeholder="Enter your restaurant name"
+                placeholder="Enter your username"
                 value=""
                 required
+                autocomplete="username"
               />
             </div>
-            
-            <div class="login-input-container">
-              <label class="form-label">
-                <i class="fas fa-key"></i>
-                Password *
-              </label>
-              <div class="password-container">
+
+            <div class="login-field">
+              <label class="login-field__label" for="passwordInput">Password</label>
+              <div class="login-field__password-wrap">
                 <input
                   type="password"
                   name="memberPassword"
@@ -74,45 +38,32 @@
                   value=""
                   required
                   id="passwordInput"
+                  autocomplete="current-password"
                 />
-                <button type="button" class="password-toggle" id="passwordToggle">
-                  <i class="fas fa-eye"></i>
+                <button type="button" class="password-toggle" id="passwordToggle" aria-label="Show password">
+                  <span class="password-toggle__text">Show</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Remember Me & Forgot Password -->
-          <div class="login-options">
+          <div class="login-card__row">
             <div class="remember-me">
-              <input type="checkbox" id="rememberMe" name="rememberMe">
-              <label for="rememberMe" class="checkbox-label">
-                <i class="fas fa-check"></i>
-                Remember me
-              </label>
+              <input type="checkbox" id="rememberMe" name="rememberMe" />
+              <label for="rememberMe" class="remember-me__label">Remember me</label>
             </div>
-            <a href="#" class="forgot-password" onclick="showForgotPassword()">
-              <i class="fas fa-question-circle"></i>
-              Forgot Password?
-            </a>
+            <a href="#" class="login-card__link" onclick="showForgotPassword(); return false;">Forgot password?</a>
           </div>
-        </div>
 
-        <!-- Submit Button -->
-        <div class="submit-section">
-          <button class="login-btn btn" name="login" type="submit">
-            <i class="fas fa-sign-in-alt"></i>
-            Sign In
-          </button>
-          
-          <div class="security-notice">
-            <i class="fas fa-shield-alt"></i>
-            <span>Your login is secured with industry-standard encryption</span>
-          </div>
+          <button class="login-submit-btn" name="login" type="submit">Sign in</button>
         </div>
+      </form>
 
-      </div>
-    </form>
+      <p class="login-page__footer">
+        Don&apos;t have an account?
+        <a href="/admin/signup" class="login-page__footer-link">Sign up</a>
+      </p>
+    </div>
   </div>
 
   <script type="text/javascript" src="/js/login.js"></script>

@@ -13,12 +13,11 @@ function validateLoginForm() {
   
   let isValid = true;
   
-  // Validate restaurant name
   if (!memberNick) {
-    showFieldError('.member-nick', 'Restaurant name is required');
+    showFieldError('.member-nick', 'Username is required');
     isValid = false;
   } else if (memberNick.length < 3) {
-    showFieldError('.member-nick', 'Restaurant name must be at least 3 characters');
+    showFieldError('.member-nick', 'Must be at least 3 characters');
     isValid = false;
   }
   
@@ -34,8 +33,8 @@ function validateLoginForm() {
   if (isValid) {
     showNotification('Form validation successful! Signing in...', 'success');
     // Add loading state to submit button
-    const submitBtn = document.querySelector('.login-btn');
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+    const submitBtn = document.querySelector('.login-submit-btn');
+    submitBtn.textContent = 'Signing in...';
     submitBtn.disabled = true;
   }
   
@@ -45,25 +44,23 @@ function validateLoginForm() {
 // Show field error
 function showFieldError(selector, message) {
   const field = document.querySelector(selector);
+  if (!field) return;
   const errorDiv = document.createElement('div');
   errorDiv.className = 'field-error';
-  errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-  
-  // Style the error message
+  errorDiv.textContent = message;
+
   errorDiv.style.cssText = `
-    color: #e74c3c;
-    font-size: 0.9rem;
+    color: #dc2626;
+    font-size: 13px;
     font-weight: 500;
-    margin-top: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    animation: slideIn 0.3s ease;
+    margin-top: 6px;
+    line-height: 1.4;
   `;
-  
-  field.parentNode.appendChild(errorDiv);
-  field.style.borderColor = '#e74c3c';
-  field.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.1)';
+
+  const host = field.closest('.login-field') || field.parentNode;
+  host.appendChild(errorDiv);
+  field.style.borderColor = '#f87171';
+  field.style.boxShadow = '0 0 0 3px rgba(248, 113, 113, 0.2)';
 }
 
 // Clear error messages
@@ -74,7 +71,7 @@ function clearErrorMessages() {
   // Reset field styles
   const fields = document.querySelectorAll('.form-input');
   fields.forEach(field => {
-    field.style.borderColor = 'rgba(44, 62, 80, 0.2)';
+    field.style.borderColor = '#cbd5e1';
     field.style.boxShadow = 'none';
   });
 }
@@ -83,31 +80,32 @@ function clearErrorMessages() {
 function showNotification(message, type = 'info', duration = 3000) {
   const notification = document.createElement('div');
   notification.className = `notification notification-${type}`;
-  notification.innerHTML = `
-    <div class="notification-content">
-      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-      <span>${message}</span>
-    </div>
-  `;
+  const content = document.createElement('div');
+  content.className = 'notification-content';
+  content.style.cssText =
+    'display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.45;color:#334155;';
+  const span = document.createElement('span');
+  span.textContent = message;
+  content.appendChild(span);
+  notification.appendChild(content);
 
-  // Add styles
+  const border =
+    type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#6366f1';
   notification.style.cssText = `
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border: 2px solid ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
-    border-radius: 15px;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    border: 1px solid ${border};
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
     z-index: 10000;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    color: #2c3e50;
-    max-width: 300px;
+    transform: translateX(110%);
+    transition: transform 0.25s ease;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 500;
+    max-width: min(320px, calc(100vw - 32px));
   `;
 
   document.body.appendChild(notification);
@@ -138,16 +136,10 @@ function initPasswordToggle() {
   passwordToggle.addEventListener('click', function() {
     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
     passwordInput.setAttribute('type', type);
-    
-    const icon = this.querySelector('i');
-    icon.classList.toggle('fa-eye');
-    icon.classList.toggle('fa-eye-slash');
-    
-    // Add animation
-    this.style.transform = 'scale(1.1)';
-    setTimeout(() => {
-      this.style.transform = 'scale(1)';
-    }, 150);
+    const label = this.querySelector('.password-toggle__text');
+    if (label) {
+      label.textContent = type === 'password' ? 'Show' : 'Hide';
+    }
   });
 }
 
@@ -182,11 +174,11 @@ function initRealTimeValidation() {
     });
     
     input.addEventListener('input', function() {
-      // Clear error on input
-      const error = this.parentNode.querySelector('.field-error');
+      const wrap = this.closest('.login-field');
+      const error = wrap ? wrap.querySelector('.field-error') : this.parentNode.querySelector('.field-error');
       if (error) {
         error.remove();
-        this.style.borderColor = 'rgba(44, 62, 80, 0.2)';
+        this.style.borderColor = '#cbd5e1';
         this.style.boxShadow = 'none';
       }
     });
@@ -201,12 +193,12 @@ function validateField(field) {
   switch (fieldName) {
     case 'memberNick':
       if (value && value.length < 3) {
-        showFieldError(`.${field.className}`, 'Restaurant name must be at least 3 characters');
+        showFieldError(`.${field.className.split(' ').join('.')}`, 'Must be at least 3 characters');
       }
       break;
     case 'memberPassword':
       if (value && value.length < 6) {
-        showFieldError(`.${field.className}`, 'Password must be at least 6 characters');
+        showFieldError(`.${field.className.split(' ').join('.')}`, 'Password must be at least 6 characters');
       }
       break;
   }
@@ -233,7 +225,7 @@ function initAutoFill() {
             usernameField.style.borderColor = 'rgba(39, 174, 96, 0.5)';
             usernameField.style.boxShadow = '0 0 0 3px rgba(39, 174, 96, 0.1)';
             setTimeout(() => {
-              usernameField.style.borderColor = 'rgba(44, 62, 80, 0.2)';
+              usernameField.style.borderColor = '#cbd5e1';
               usernameField.style.boxShadow = 'none';
             }, 2000);
           }
@@ -244,7 +236,7 @@ function initAutoFill() {
             passwordField.style.borderColor = 'rgba(39, 174, 96, 0.5)';
             passwordField.style.boxShadow = '0 0 0 3px rgba(39, 174, 96, 0.1)';
             setTimeout(() => {
-              passwordField.style.borderColor = 'rgba(44, 62, 80, 0.2)';
+              passwordField.style.borderColor = '#cbd5e1';
               passwordField.style.boxShadow = 'none';
             }, 2000);
           }
@@ -270,7 +262,7 @@ function initKeyboardShortcuts() {
       const inputs = document.querySelectorAll('.form-input');
       inputs.forEach(input => {
         input.value = '';
-        input.style.borderColor = 'rgba(44, 62, 80, 0.2)';
+        input.style.borderColor = '#cbd5e1';
         input.style.boxShadow = 'none';
       });
       clearErrorMessages();
@@ -295,40 +287,16 @@ document.addEventListener('DOMContentLoaded', function() {
   initKeyboardShortcuts();
   
   // Add smooth animations to form elements
-  const formElements = document.querySelectorAll('.login-input-container, .form-section');
+  const formElements = document.querySelectorAll('.login-card');
   formElements.forEach((element, index) => {
     element.style.opacity = '0';
-    element.style.transform = 'translateY(20px)';
-    
+    element.style.transform = 'translateY(12px)';
+
     setTimeout(() => {
-      element.style.transition = 'all 0.6s ease';
+      element.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
       element.style.opacity = '1';
       element.style.transform = 'translateY(0)';
-    }, index * 100);
-  });
-  
-  // Add hover effects to interactive elements
-  const interactiveElements = document.querySelectorAll('.form-input, .nav-link, .back-btn, .copy-btn');
-  interactiveElements.forEach(element => {
-    element.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-2px)';
-    });
-    
-    element.addEventListener('mouseleave', function() {
-      this.style.transform = 'translateY(0)';
-    });
-  });
-  
-  // Add focus effects to form inputs
-  const formInputs = document.querySelectorAll('.form-input');
-  formInputs.forEach(input => {
-    input.addEventListener('focus', function() {
-      this.parentNode.style.transform = 'scale(1.02)';
-    });
-    
-    input.addEventListener('blur', function() {
-      this.parentNode.style.transform = 'scale(1)';
-    });
+    }, index * 60);
   });
   
   console.log('All login page features initialized successfully!');

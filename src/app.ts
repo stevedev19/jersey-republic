@@ -20,7 +20,11 @@ const store = new MongoDBStore({
 });
 
 /** 1-ENTRANCE **/
-const app = express(); 
+const app = express();
+app.get("/favicon.svg", (_req, res) => {
+  res.type("image/svg+xml");
+  res.sendFile(path.join(process.cwd(), "favicon.svg"));
+});
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(express.urlencoded({extended: true }));

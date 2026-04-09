@@ -23,7 +23,8 @@ constructor() {
   /** SPA */
 
   public async getProducts(inquiry: ProductInquiry): Promise<Product[]> {
-const match: T = {productStatus: {$in: [ProductStatus.PROCESS, ProductStatus.PAUSE]}};
+    /** Main site / SPA: only active listings (PROCESS). PAUSE = inactive in admin. */
+    const match: T = { productStatus: ProductStatus.PROCESS };
 
 if(inquiry.productCollection)
    match.productCollection = inquiry.productCollection;
@@ -72,12 +73,12 @@ public async getProduct(
 ): Promise<Product> {
 const productId = shapeIntoMongooseObjectId(id);
 
-let result = await this.productModel
-.findOne({
-  _id: productId, 
-  productStatus: {$in: [ProductStatus.PROCESS, ProductStatus.PAUSE]},
-})
-.exec();
+    let result = await this.productModel
+      .findOne({
+        _id: productId,
+        productStatus: ProductStatus.PROCESS,
+      })
+      .exec();
 if(!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
 // TODO: if authenticated users => first => view log creation
@@ -189,7 +190,7 @@ public async createNewProduct(input: ProductInput): Promise<Product> {
     const result = await this.productModel
       .find({
         madeYear: { $gte: startYear, $lte: endYear },
-        productStatus: { $in: [ProductStatus.PROCESS, ProductStatus.PAUSE] },
+        productStatus: ProductStatus.PROCESS,
       })
       .sort({ createdAt: -1 })
       .limit(6)

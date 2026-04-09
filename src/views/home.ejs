@@ -1,304 +1,311 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/home.css" />
+<link rel="stylesheet" type="text/css" href="/css/admin.css" />
 <link rel="stylesheet" type="text/css" href="/css/utilities.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
-  <div class="home-container">
-    <div class="navigation-menu">
-      <ul class="nav justify-content-center">
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link active" href="/admin">Home</a>
-        </li>
-        <% if(!member) { %>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/signup">Signup</a>
-        </li>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/login">Login</a>
-        </li>
-        <% } else { %>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/product/all">Jerseys</a>
-        </li>
-        <li class="nav-item cursor-pointer">
-          <a class="nav-link" href="/admin/user/all">Users</a>
-        </li>
-        <li
-          class="nav-item cursor-pointer"
-          onclick="return confirm('Do you want to logout?')"
-        >
-          <a class="nav-link" href="/admin/logout">Logout</a>
-        </li>
-        <% } %>
-      </ul>
-    </div>
-
-    <!-- Enhanced Header Section -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon">
-          <i class="fas fa-home"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">Admin Dashboard</h1>
-          <p class="page-subtitle">Welcome to Jersey Republic Management System</p>
+  <% if(member) { %>
+  <div class="home-container admin-jersey-dashboard">
+    <header class="admin-jersey-topnav">
+      <div class="admin-jersey-topnav__inner">
+        <nav class="navigation-menu admin-jersey-navigation" aria-label="Admin">
+          <ul class="nav admin-jersey-navlist justify-content-center">
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link active" href="/admin">Home</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin/product/all">Jerseys</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link" href="/admin/user/all">Users</a>
+            </li>
+            <li class="nav-item cursor-pointer">
+              <a class="nav-link js-admin-logout" href="/admin/logout">Logout</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="admin-home-clock">
+          <div class="live-clock" id="adminTopnavClock">--:--:--</div>
+          <div class="clock-label">Current time</div>
         </div>
       </div>
-      <div class="live-clock-container">
-        <div class="live-clock" id="liveClock">--:--:--</div>
-        <div class="clock-label">Current Time</div>
-      </div>
-    </div>
+    </header>
 
-    <!-- Photo Background Container -->
-    <div class="photo-container photo-container-bg">
-      <div class="photo-overlay"></div>
-    </div>
-
-
-    <% if(member) { %>
-    <!-- System Overview Section - Only visible when admin is logged in -->
-    <div class="dashboard-section">
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-chart-line"></i>
-          System Overview
-        </h2>
-        <div class="refresh-indicator">
-          <i class="fas fa-sync-alt"></i>
-          <span>Auto-refresh</span>
-        </div>
-      </div>
-
-      <div class="dashboard-cards">
-        <div class="glass-card">
-          <div class="card-icon">
-            <i class="fas fa-users"></i>
+    <div class="admin-dashboard-shell admin-dashboard-shell--dashboard">
+      <div class="admin-dashboard-hero-viewport">
+        <div class="admin-hero admin-hero--dashboard">
+          <div class="admin-hero-left admin-hero-left--dashboard">
+            <div>
+              <h1>Admin dashboard</h1>
+              <p>Welcome back — Jersey Republic management system</p>
+            </div>
           </div>
-          <div class="card-content">
-            <h3 class="card-title">Total Users</h3>
-            <p class="card-value" id="totalUsers">0</p>
-            <div class="card-trend">
-              <i class="fas fa-arrow-up"></i>
-              <span>+12% this month</span>
+          <div class="admin-hero-actions admin-hero-actions--dashboard">
+            <a href="/admin/product/all" class="admin-hero-btn-secondary admin-hero-btn-secondary--dashboard">View jerseys</a>
+            <a href="/admin/product/all#admin-add-jersey" class="admin-hero-btn-primary admin-hero-btn-primary--dashboard">+ Add jersey</a>
+          </div>
+        </div>
+      </div>
+
+      <section class="admin-dashboard-feature-strip" aria-label="What you can do">
+        <ul class="admin-dashboard-feature-grid">
+          <li class="admin-dashboard-feature-card admin-dashboard-feature-card--orders">
+            <span class="admin-dashboard-feature-num" aria-hidden="true">02</span>
+            <h2 class="admin-dashboard-feature-title">Orders</h2>
+            <p class="admin-dashboard-feature-desc">Track every order from placement to fulfillment without the noise.</p>
+          </li>
+          <li class="admin-dashboard-feature-card admin-dashboard-feature-card--inventory">
+            <span class="admin-dashboard-feature-num" aria-hidden="true">01</span>
+            <h2 class="admin-dashboard-feature-title">Inventory</h2>
+            <p class="admin-dashboard-feature-desc">Keep your jersey catalog organized, stocked, and always up to date.</p>
+          </li>
+          <li class="admin-dashboard-feature-card admin-dashboard-feature-card--analytics">
+            <span class="admin-dashboard-feature-num" aria-hidden="true">03</span>
+            <h2 class="admin-dashboard-feature-title">Analytics</h2>
+            <p class="admin-dashboard-feature-desc">Understand what's selling and when, at a glance.</p>
+          </li>
+        </ul>
+      </section>
+
+      <div class="admin-stats-grid dashboard-section admin-stats-grid--dashboard">
+        <div class="admin-stat admin-stat--users admin-stat--dashboard">
+          <div class="admin-stat-icon admin-stat-icon--dashboard"><i class="fas fa-users"></i></div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-label admin-stat-label--dashboard">Total Users</span>
+            <p class="admin-stat-num admin-stat-num--dashboard" id="totalUsers">0</p>
+            <p class="admin-stat-delta admin-stat-delta--dashboard-muted">↑ 2 this week</p>
+          </div>
+        </div>
+        <div class="admin-stat admin-stat--active admin-stat--dashboard">
+          <div class="admin-stat-icon admin-stat-icon--dashboard"><i class="fas fa-user-check"></i></div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-label admin-stat-label--dashboard">Active Users</span>
+            <p class="admin-stat-num admin-stat-num--dashboard" id="activeLogins">0</p>
+            <p class="admin-stat-delta admin-stat-delta--dashboard-muted">100% active</p>
+          </div>
+        </div>
+        <div class="admin-stat admin-stat--activity admin-stat--dashboard">
+          <div class="admin-stat-icon admin-stat-icon--dashboard"><i class="fas fa-clock"></i></div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-label admin-stat-label--dashboard">Last Activity</span>
+            <p class="admin-stat-num admin-stat-num--dashboard" id="lastActivity">--:--</p>
+            <p class="admin-stat-delta admin-stat-delta--dashboard-muted">Just now</p>
+          </div>
+        </div>
+        <div class="admin-stat admin-stat--jerseys admin-stat--dashboard">
+          <div class="admin-stat-icon admin-stat-icon--dashboard"><i class="fas fa-tshirt"></i></div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-label admin-stat-label--dashboard">Total Jerseys</span>
+            <p class="admin-stat-num admin-stat-num--dashboard" id="totalJerseys">0</p>
+            <p class="admin-stat-delta admin-stat-delta--dashboard-muted">↑ 1 today</p>
+          </div>
+        </div>
+        <div class="admin-stat admin-stat--revenue admin-stat--dashboard">
+          <div class="admin-stat-icon admin-stat-icon--dashboard"><i class="fas fa-dollar-sign"></i></div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-label admin-stat-label--dashboard">Total Revenue</span>
+            <p class="admin-stat-num admin-stat-num--dashboard" id="inventoryRetailValue">$0</p>
+            <p class="admin-stat-delta admin-stat-delta--dashboard" id="inventoryRetailDelta">Price × stock on hand</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-dashboard-columns admin-dashboard-columns--dashboard">
+        <div class="admin-dashboard-primary">
+          <div class="admin-quick-links-grid admin-quick-links-grid--dashboard">
+            <a href="/admin/product/all" class="admin-quick-link admin-quick-link--dashboard admin-quick-link--dash-inv">
+              <span class="admin-quick-link-icon admin-quick-link-icon--dashboard" aria-hidden="true"><i class="fas fa-tshirt"></i></span>
+              <span class="admin-quick-link-text">
+                <strong>Jersey inventory</strong>
+                <span>Manage listings and stock</span>
+              </span>
+              <span class="admin-quick-link-arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/admin/user/all" class="admin-quick-link admin-quick-link--dashboard admin-quick-link--dash-users">
+              <span class="admin-quick-link-icon admin-quick-link-icon--dashboard" aria-hidden="true"><i class="fas fa-users"></i></span>
+              <span class="admin-quick-link-text">
+                <strong>Manage users</strong>
+                <span>Accounts and permissions</span>
+              </span>
+              <span class="admin-quick-link-arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/admin/product/all#admin-add-jersey" class="admin-quick-link admin-quick-link--dashboard admin-quick-link--dash-add">
+              <span class="admin-quick-link-icon admin-quick-link-icon--dashboard" aria-hidden="true"><i class="fas fa-plus-circle"></i></span>
+              <span class="admin-quick-link-text">
+                <strong>Add new jersey</strong>
+                <span>Create a listing</span>
+              </span>
+              <span class="admin-quick-link-arrow" aria-hidden="true">→</span>
+            </a>
+            <a href="/admin/product/all" class="admin-quick-link admin-quick-link--dashboard admin-quick-link--dash-edit">
+              <span class="admin-quick-link-icon admin-quick-link-icon--dashboard" aria-hidden="true"><i class="fas fa-edit"></i></span>
+              <span class="admin-quick-link-text">
+                <strong>Edit listings</strong>
+                <span>Prices &amp; availability</span>
+              </span>
+              <span class="admin-quick-link-arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <section class="admin-revenue-chart" aria-label="Revenue this week">
+            <h3 class="admin-revenue-chart__title">Revenue this week</h3>
+            <div class="admin-revenue-chart__canvas-wrap">
+              <canvas id="adminRevenueChart" height="140"></canvas>
+            </div>
+          </section>
+
+          <div class="admin-system-panel admin-system-panel--dashboard">
+            <div class="admin-system-panel__head admin-system-panel__head--dashboard">
+              <h2>System overview</h2>
+              <button type="button" class="admin-system-refresh admin-system-refresh--dashboard" id="adminDashboardRefreshBtn">Auto-refresh</button>
+            </div>
+            <div class="admin-system-row admin-system-row--dashboard">
+              <span class="admin-system-key admin-system-key--dashboard">API status</span>
+              <span class="admin-system-value admin-system-value--dashboard">
+                <span class="admin-system-dot admin-system-dot--dashboard admin-system-dot--pulse" style="background:#1D9E75"></span>
+                Online
+              </span>
+            </div>
+            <div class="admin-system-row admin-system-row--dashboard">
+              <span class="admin-system-key admin-system-key--dashboard">Database</span>
+              <span class="admin-system-value admin-system-value--dashboard">
+                <span class="admin-system-dot admin-system-dot--dashboard" style="background:#1D9E75"></span>
+                Connected
+              </span>
+            </div>
+            <div class="admin-system-row admin-system-row--dashboard">
+              <span class="admin-system-key admin-system-key--dashboard">Image storage</span>
+              <span class="admin-system-value admin-system-value--dashboard">
+                <span class="admin-system-dot admin-system-dot--dashboard" style="background:#BA7517"></span>
+                72% used
+              </span>
+            </div>
+            <div class="admin-system-row admin-system-row--dashboard">
+              <span class="admin-system-key admin-system-key--dashboard">Last backup</span>
+              <span class="admin-system-value admin-system-value--dashboard">Today, 06:00</span>
+            </div>
+            <div class="admin-system-row admin-system-row--dashboard">
+              <span class="admin-system-key admin-system-key--dashboard">Server</span>
+              <span class="admin-system-value admin-system-value--dashboard admin-system-value--mono admin-system-value--mono--dashboard">localhost:3003</span>
             </div>
           </div>
         </div>
 
-        <div class="glass-card">
-          <div class="card-icon">
-            <i class="fas fa-user-check"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Active Users</h3>
-            <p class="card-value" id="activeLogins">0</p>
-            <div class="card-trend">
-              <i class="fas fa-arrow-up"></i>
-              <span>+8% this week</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <div class="card-icon">
-            <i class="fas fa-clock"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Last Activity</h3>
-            <p class="card-value" id="lastActivity">--:--</p>
-            <div class="card-trend">
-              <i class="fas fa-circle"></i>
-              <span>Live updates</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <div class="card-icon">
-            <i class="fas fa-tshirt"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Total Jerseys</h3>
-            <p class="card-value" id="totalJerseys">0</p>
-            <div class="card-trend">
-              <i class="fas fa-arrow-up"></i>
-              <span>+5 new this week</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <div class="card-icon">
-            <i class="fas fa-dollar-sign"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Total Revenue</h3>
-            <p class="card-value" id="totalRevenue">$0</p>
-            <div class="card-trend">
-              <i class="fas fa-arrow-up"></i>
-              <span>+15% this month</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-card">
-          <div class="card-icon">
-            <i class="fas fa-chart-pie"></i>
-          </div>
-          <div class="card-content">
-            <h3 class="card-title">Orders Today</h3>
-            <p class="card-value" id="ordersToday">0</p>
-            <div class="card-trend">
-              <i class="fas fa-arrow-up"></i>
-              <span>+3 from yesterday</span>
-            </div>
-          </div>
-        </div>
+        <aside class="admin-activity-panel admin-activity-panel--dashboard">
+          <h2>Recent activity</h2>
+          <ul class="admin-activity-list activity-list" id="activityList" data-static="true">
+            <li class="admin-activity-item admin-activity-item--dashboard">
+              <span class="admin-activity-dot admin-activity-dot--dashboard" style="background:#22c55e"></span>
+              <div class="admin-activity-body">
+                <p class="admin-activity-text admin-activity-text--dashboard">New jersey added — RC Lens away kit</p>
+                <span class="admin-activity-time admin-activity-time--dashboard">2 min ago</span>
+              </div>
+            </li>
+            <li class="admin-activity-item admin-activity-item--dashboard">
+              <span class="admin-activity-dot admin-activity-dot--dashboard" style="background:#3b82f6"></span>
+              <div class="admin-activity-body">
+                <p class="admin-activity-text admin-activity-text--dashboard">User login — admin</p>
+                <span class="admin-activity-time admin-activity-time--dashboard">13:42 today</span>
+              </div>
+            </li>
+            <li class="admin-activity-item admin-activity-item--dashboard">
+              <span class="admin-activity-dot admin-activity-dot--dashboard" style="background:#d97706"></span>
+              <div class="admin-activity-body">
+                <p class="admin-activity-text admin-activity-text--dashboard">Stock updated — Portugal home kit (12 → 9)</p>
+                <span class="admin-activity-time admin-activity-time--dashboard">11:30 today</span>
+              </div>
+            </li>
+            <li class="admin-activity-item admin-activity-item--dashboard">
+              <span class="admin-activity-dot admin-activity-dot--dashboard" style="background:#3b82f6"></span>
+              <div class="admin-activity-body">
+                <p class="admin-activity-text admin-activity-text--dashboard">Status changed — Borussia Dortmund set to active</p>
+                <span class="admin-activity-time admin-activity-time--dashboard">Yesterday, 17:05</span>
+              </div>
+            </li>
+            <li class="admin-activity-item admin-activity-item--dashboard">
+              <span class="admin-activity-dot admin-activity-dot--dashboard" style="background:#22c55e"></span>
+              <div class="admin-activity-body">
+                <p class="admin-activity-text admin-activity-text--dashboard">New user registered — user_0011</p>
+                <span class="admin-activity-time admin-activity-time--dashboard">Yesterday, 14:22</span>
+              </div>
+            </li>
+            <li class="admin-activity-item admin-activity-item--dashboard">
+              <span class="admin-activity-dot admin-activity-dot--dashboard" style="background:#dc2626"></span>
+              <div class="admin-activity-body">
+                <p class="admin-activity-text admin-activity-text--dashboard">Low stock alert — Arsenal away kit (3 left)</p>
+                <span class="admin-activity-time admin-activity-time--dashboard">Yesterday, 09:14</span>
+              </div>
+            </li>
+          </ul>
+          <a href="/admin/product/all" class="admin-activity-footer-link">View all activity</a>
+        </aside>
       </div>
     </div>
-
-    <!-- Quick Actions Section - Only visible when admin is logged in -->
-    <div class="quick-actions-section">
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-bolt"></i>
-          Quick Actions
-        </h2>
-      </div>
-      
-      <div class="action-buttons">
-        <a href="/admin/product/all" class="action-btn">
-          <div class="action-icon">
-            <i class="fas fa-tshirt"></i>
-          </div>
-          <div class="action-content">
-            <h4>Manage Jerseys</h4>
-            <p>Add, edit, or remove products</p>
-          </div>
-        </a>
-
-        <a href="/admin/user/all" class="action-btn">
-          <div class="action-icon">
-            <i class="fas fa-users"></i>
-          </div>
-          <div class="action-content">
-            <h4>Manage Users</h4>
-            <p>View and manage user accounts</p>
-          </div>
-        </a>
-      </div>
-    </div>
-
-    <!-- Recent Activity Section - Only visible when admin is logged in -->
-    <div class="recent-activity-section">
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-history"></i>
-          Recent Activity
-        </h2>
-        <div class="section-actions">
-          <button class="action-btn-small" onclick="clearAllActivity()" title="Clear All Activity">
-            <i class="fas fa-trash-alt"></i>
-            Clear All
-          </button>
-        </div>
-      </div>
-      
-      <div class="activity-list" id="activityList">
-        <div class="activity-item">
-          <div class="activity-icon">
-            <i class="fas fa-user-plus"></i>
-          </div>
-          <div class="activity-content">
-            <h4>New user registered</h4>
-            <p>John Doe joined the platform</p>
-            <span class="activity-time">2 minutes ago</span>
-          </div>
-          <div class="activity-actions">
-            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="activity-item">
-          <div class="activity-icon">
-            <i class="fas fa-shopping-cart"></i>
-          </div>
-          <div class="activity-content">
-            <h4>New order received</h4>
-            <p>Arsenal Jersey - Size L</p>
-            <span class="activity-time">15 minutes ago</span>
-          </div>
-          <div class="activity-actions">
-            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="activity-item">
-          <div class="activity-icon">
-            <i class="fas fa-tshirt"></i>
-          </div>
-          <div class="activity-content">
-            <h4>Product updated</h4>
-            <p>Real Madrid Jersey stock updated</p>
-            <span class="activity-time">1 hour ago</span>
-          </div>
-          <div class="activity-actions">
-            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="activity-item">
-          <div class="activity-icon">
-            <i class="fas fa-star"></i>
-          </div>
-          <div class="activity-content">
-            <h4>Review received</h4>
-            <p>5-star rating for Manchester United Jersey</p>
-            <span class="activity-time">2 hours ago</span>
-          </div>
-          <div class="activity-actions">
-            <button class="delete-activity-btn" onclick="deleteActivity(this)" title="Delete Activity">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <% } else { %>
-    <!-- Welcome message for non-authenticated users -->
-    <div class="welcome-section">
-      <div class="welcome-content">
-        <div class="welcome-icon">
-          <i class="fas fa-shield-alt"></i>
-        </div>
-        <h2 class="welcome-title">Welcome to Jersey Republic Admin</h2>
-        <p class="welcome-message">Please log in to access the admin dashboard and manage your jersey store.</p>
-        <div class="welcome-actions">
-          <a href="/admin/login" class="welcome-btn primary">
-            <i class="fas fa-sign-in-alt"></i>
-            Login
-          </a>
-          <a href="/admin/signup" class="welcome-btn secondary">
-            <i class="fas fa-user-plus"></i>
-            Sign Up
-          </a>
-        </div>
-      </div>
-    </div>
-    <% } %>
   </div>
+  <% } else { %>
+  <div class="home-container jr-gate">
+    <header class="jr-gate__header">
+      <div class="jr-gate__header-inner">
+        <a href="/admin" class="jr-gate__logo">Jersey Republic</a>
+        <nav class="jr-gate__nav" aria-label="Primary">
+          <a href="/admin" class="jr-gate__nav-link is-active">Home</a>
+          <a href="/admin/login" class="jr-gate__nav-link">Login</a>
+          <a href="/admin/signup" class="jr-gate__nav-link">Signup</a>
+        </nav>
+      </div>
+    </header>
 
-  <!-- Notification Container -->
+    <div class="jr-gate__body">
+      <section class="jr-gate__hero-zone">
+        <div class="jr-gate__hero">
+          <p class="jr-gate__eyebrow">Jersey Republic Admin</p>
+          <h1 class="jr-gate__headline">Your store, always in order.</h1>
+          <p class="jr-gate__lede">
+            A calm, focused workspace for managing inventory, orders, and your storefront.
+          </p>
+          <div class="jr-gate__ctas">
+            <a href="/admin/login" class="jr-gate__btn jr-gate__btn--primary">Sign In</a>
+            <a href="/admin/signup" class="jr-gate__btn jr-gate__btn--secondary">Create account</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="jr-gate__features" aria-label="What you can do">
+        <ul class="jr-gate__feature-grid">
+          <li class="jr-gate__feature-card">
+            <span class="jr-gate__feature-num" aria-hidden="true">01</span>
+            <h2 class="jr-gate__feature-title">Inventory</h2>
+            <p class="jr-gate__feature-desc">Keep your jersey catalog organized, stocked, and always up to date.</p>
+          </li>
+          <li class="jr-gate__feature-card">
+            <span class="jr-gate__feature-num" aria-hidden="true">02</span>
+            <h2 class="jr-gate__feature-title">Orders</h2>
+            <p class="jr-gate__feature-desc">Track every order from placement to fulfillment without the noise.</p>
+          </li>
+          <li class="jr-gate__feature-card">
+            <span class="jr-gate__feature-num" aria-hidden="true">03</span>
+            <h2 class="jr-gate__feature-title">Analytics</h2>
+            <p class="jr-gate__feature-desc">Understand what's selling and when, at a glance.</p>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="jr-gate__footer-strip">
+        <span class="jr-gate__footer-copy">© 2025 Jersey Republic</span>
+        <span class="jr-gate__footer-meta">Built for focus.</span>
+      </footer>
+    </div>
+  </div>
+  <% } %>
+
   <div id="notificationContainer" class="notification-container"></div>
 
+  <% if(member) { %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <% } %>
+  <script type="text/javascript" src="/js/admin-topnav-clock.js"></script>
   <script type="text/javascript" src="/js/home.js"></script>
 </body>
 

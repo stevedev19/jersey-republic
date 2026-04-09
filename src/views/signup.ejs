@@ -1,218 +1,124 @@
 <%- include('includes/header') %>
 
+<link rel="stylesheet" type="text/css" href="/css/login.css" />
 <link rel="stylesheet" type="text/css" href="/css/signup.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
 <body>
-  <div class="signup-container">
-    <!-- Enhanced Header Section -->
-    <div class="page-header">
-      <div class="header-content">
-        <div class="header-icon">
-          <i class="fas fa-user-plus"></i>
-        </div>
-        <div class="header-text">
-          <h1 class="page-title">Create Account</h1>
-          <p class="page-subtitle">Join Jersey Republic Management System</p>
-        </div>
-      </div>
-      <div class="back-link">
-        <a href="/admin" class="back-btn">
-          <i class="fas fa-arrow-left"></i>
-          Back to Home
-        </a>
-      </div>
-    </div>
+  <div class="login-page signup-flow">
+    <a href="/admin" class="login-page__back">Back</a>
 
-    <form onsubmit="return validateSignForm()"
-     action="/admin/signup" 
-     method="POST" 
-     enctype="multipart/form-data">
-      
-      <div class="signup-frame">
-        <!-- Navigation Links -->
-        <div class="signup-top">
-          <div class="nav-links">
-            <span class="nav-text">Already have an account?</span>
-            <a href="/admin/login" class="nav-link">
-              <i class="fas fa-sign-in-alt"></i>
-              Login Here
-            </a>
-          </div>
-        </div>
+    <div class="login-page__main">
+      <form
+        class="login-form"
+        onsubmit="return validateSignForm()"
+        action="/admin/signup"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <input type="hidden" name="memberType" value="RESTAURANT" />
 
-        <!-- Form Fields -->
-        <div class="form-section">
-          <h3 class="section-title">
-            <i class="fas fa-user"></i>
-            Account Information
-          </h3>
-          
-          <div class="sign-input-frame">
-            <div class="sign-up-frame">
-              <label class="form-label">
-                <i class="fas fa-store"></i>
-                Store Admin Name *
-              </label>
+        <div class="login-card signup-card">
+          <p class="login-card__eyebrow">Jersey Republic</p>
+          <h1 class="login-card__title">Create your account</h1>
+
+          <div class="login-card__fields signup-card__fields">
+            <div class="login-field">
+              <label class="login-field__label" for="signup-username">Username</label>
               <input
+                id="signup-username"
                 type="text"
                 name="memberNick"
                 class="member-nick form-input"
-                placeholder="Store Admin name"
+                placeholder="Choose a username"
                 value=""
                 required
+                autocomplete="username"
               />
             </div>
-            <div class="sign-up-frame">
-              <label class="form-label">
-                <i class="fas fa-phone"></i>
-                Phone Number *
-              </label>
+
+            <div class="login-field">
+              <label class="login-field__label" for="signup-phone">Phone number</label>
               <input
-                type="text"
+                id="signup-phone"
+                type="tel"
                 name="memberPhone"
                 class="member-phone form-input"
                 placeholder="Phone number"
                 value=""
                 required
+                autocomplete="tel"
               />
             </div>
-          </div>
 
-          <div class="sign-input-frame">
-            <div class="sign-up-frame">
-              <label class="form-label">
-                <i class="fas fa-lock"></i>
-                Password *
-              </label>
-              <input
-                type="password"
-                name="memberPassword"
-                class="member-password form-input"
-                placeholder="Create a strong password"
-                value=""
-                required
-              />
+            <div class="login-field">
+              <label class="login-field__label" for="signupPasswordInput">Password</label>
+              <div class="login-field__password-wrap">
+                <input
+                  id="signupPasswordInput"
+                  type="password"
+                  name="memberPassword"
+                  class="member-password form-input"
+                  placeholder="Create a strong password"
+                  value=""
+                  required
+                  autocomplete="new-password"
+                />
+                <button type="button" class="password-toggle" id="signupPasswordToggle" aria-label="Show password">
+                  <span class="password-toggle__text">Show</span>
+                </button>
+              </div>
             </div>
-            <div class="sign-up-frame">
-              <label class="form-label">
-                <i class="fas fa-lock"></i>
-                Confirm Password *
-              </label>
+
+            <div class="login-field">
+              <label class="login-field__label" for="signupConfirmPassword">Confirm password</label>
               <input
+                id="signupConfirmPassword"
                 type="password"
                 name="confirmPassword"
                 class="confirm-password form-input"
                 placeholder="Confirm your password"
                 value=""
                 required
+                autocomplete="new-password"
               />
             </div>
-          </div>
-        </div>
 
-        <!-- Image Upload Section -->
-        <div class="form-section">
-          <h3 class="section-title">
-            <!-- <i class="fas fa-image"></i>
-            Store Admin Image -->
-          </h3>
-          
-          <div class="signup-input-frame">
-          <div class="media-frame">
-            <div class="upload-box">
-              <img class="upload-placeholder" src="/img/store.jpeg" id="imagePreview" />
-              <input
-                type="file"
-                id="input-file"
-                class="image-input"
-                name="memberImage"
-                accept="image/jpeg,image/jpg,image/png"
-                onchange="previewFileHandler(this, 1)"
-              />
-              <div class="upload-overlay">
-                <i class="fas fa-camera"></i>
-              </div>
-            </div>
-            
-            <div class="upload-info">
-              <div class="upload-header">
-                <span class="media-text">Store Admin Image</span>
-                <div class="file-requirements">
-                  <i class="fas fa-info-circle"></i>
-                  <span>JPG, JPEG, or PNG only (max 5MB)</span>
+            <div class="login-field signup-field--upload">
+              <span class="login-field__label">Profile image</span>
+              <p class="signup-upload__hint signup-upload__hint--top">JPG or PNG, maximum 5MB</p>
+              <div class="signup-upload">
+                <div class="signup-upload__preview-wrap">
+                  <img id="imagePreview" class="signup-upload__preview" src="/img/store.jpeg" alt="" />
                 </div>
-              </div>
-            </div>
-          </div>              </div>
-              
-              <div class="upload-container">
-                <div class="upload-header">
-                  <span class="media-text">Store Admin Image</span>
-                  <div class="file-requirements">
-                    <i class="fas fa-info-circle"></i>
-                    <span>JPG, JPEG, or PNG only</span>
-                  </div>
-                </div>
-                
-                <div class="file-box preview-image">
-                  <input
-                    class="upload-name"
-                    value="Choose image"
-                    disabled="disabled"
-                    id="fileName"
-                  />
-                  <label for="input-file" class="file-input-label">
-                    <i class="fas fa-upload"></i>
-                    Upload Image
-                  </label>
+                <div class="signup-upload__actions">
                   <input
                     type="file"
-                    id="input-file"
-                    class="upload-hidden form-control-file member-image"
+                    id="signupImageInput"
                     name="memberImage"
+                    class="signup-upload__input"
                     accept="image/jpeg,image/jpg,image/png"
+                    required
+                    onchange="previewFileHandler(this)"
                   />
-                </div>
-                
-                <div class="thumbnail-desc">
-                  <div class="desc-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>High quality image recommended</span>
-                  </div>
-                  <div class="desc-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Maximum file size: 5MB</span>
-                  </div>
-                  <div class="desc-item">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Supported formats: JPG, JPEG, PNG</span>
-                  </div>
+                  <label for="signupImageInput" class="signup-upload__btn">Choose image</label>
+                  <p id="signupFileName" class="signup-upload__filename">No file chosen</p>
                 </div>
               </div>
             </div>
           </div>
-          <div class="submit-section">
-            <button class="signup-btn btn" name="signup" type="submit">
-              <i class="fas fa-user-plus"></i>
-               Create Account
-            </button>
-            
-            <div class="terms-notice">
-              <i class="fas fa-shield-alt"></i>
-              <span>By creating an account, you agree to our Terms of Service and Privacy Policy</span>
-            </div>
-          </div>
+
+          <p class="signup-card__terms">By creating an account, you agree to our Terms of Service and Privacy Policy.</p>
+
+          <button class="login-submit-btn signup-btn" name="signup" type="submit">Create account</button>
         </div>
       </form>
+
+      <p class="login-page__footer">
+        Already have an account?
+        <a href="/admin/login" class="login-page__footer-link">Sign in</a>
+      </p>
     </div>
-        </div>
-
-        <!-- Hidden Field -->
-        <input name="memberType" value="RESTAURANT" hidden />
-
-        <!-- Submit Button -->
-       
+  </div>
 
   <script type="text/javascript" src="/js/signup.js"></script>
 </body>

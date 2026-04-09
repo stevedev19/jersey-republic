@@ -1,5 +1,5 @@
 // Enhanced Users Management - Interactive Features
-console.log("Enhanced Users Management System initialized");
+console.log('Enhanced Users Management System initialized');
 
 class UsersManager {
   constructor() {
@@ -11,27 +11,53 @@ class UsersManager {
 
   init() {
     this.loadUsers();
-    this.setupEventListeners();
+    this.bindTableDelegation();
+    this.setupStaticEventListeners();
     this.updateStats();
     this.initializeAnimations();
   }
 
   loadUsers() {
-    // Extract users from the table rows
-    const rows = document.querySelectorAll('.user-row');
-    this.users = Array.from(rows).map(row => ({
-      id: row.dataset.userId,
-      name: row.querySelector('.user-name').textContent,
-      phone: row.querySelector('.phone-link').textContent.trim(),
-      points: parseInt(row.querySelector('.points-badge').textContent.trim()) || 0,
-      status: row.querySelector('.status-select').value,
-      element: row
-    }));
+    const rows = document.querySelectorAll('.users-page-table .user-row');
+    this.users = Array.from(rows).map((row, listIndex) => {
+      const template = row.cloneNode(true);
+      let status = row.dataset.memberStatus || 'ACTIVE';
+      if (status !== 'DELETE') {
+        const t = template.querySelector('.member-status-toggle');
+        if (t) status = t.checked ? 'ACTIVE' : 'BLOCK';
+      }
+      const pts = template.querySelector('.points-value');
+      return {
+        id: row.dataset.userId,
+        listIndex,
+        name: template.querySelector('.user-name').textContent.trim(),
+        phone: (row.dataset.memberPhone || template.querySelector('.phone-link')?.textContent || '').trim(),
+        points: parseInt(pts ? pts.textContent.trim() : '0', 10) || 0,
+        status,
+        address: row.dataset.memberAddress || '',
+        description: row.dataset.memberDesc || '',
+        element: template
+      };
+    });
     this.filteredUsers = [...this.users];
   }
 
-  setupEventListeners() {
-    // Search functionality
+  bindTableDelegation() {
+    const table = document.querySelector('.users-page-table .modern-table');
+    if (!table || this._tableDelegationBound) return;
+    this._tableDelegationBound = true;
+    table.addEventListener('change', (e) => {
+      const t = e.target;
+      if (t && t.classList && t.classList.contains('member-status-toggle')) {
+        this.handleStatusToggle(t);
+      }
+    });
+  }
+
+  setupStaticEventListeners() {
+    if (this._staticListenersBound) return;
+    this._staticListenersBound = true;
+
     const searchInput = document.getElementById('userSearch');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -39,7 +65,6 @@ class UsersManager {
       });
     }
 
-    // Status filter
     const statusFilter = document.getElementById('statusFilter');
     if (statusFilter) {
       statusFilter.addEventListener('change', (e) => {
@@ -47,21 +72,12 @@ class UsersManager {
       });
     }
 
-    // Sortable columns
     document.querySelectorAll('.sortable').forEach(header => {
       header.addEventListener('click', () => {
         this.sortTable(header.dataset.sort);
       });
     });
 
-    // Status change handlers
-    document.querySelectorAll('.member-status').forEach(select => {
-      select.addEventListener('change', (e) => {
-        this.handleStatusChange(e.target);
-      });
-    });
-
-    // Action button handlers
     document.querySelectorAll('.view-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -89,7 +105,7 @@ class UsersManager {
 
   filterUsers(searchTerm) {
     const term = searchTerm.toLowerCase();
-    this.filteredUsers = this.users.filter(user => 
+    this.filteredUsers = this.users.filter(user =>
       user.name.toLowerCase().includes(term) ||
       user.phone.toLowerCase().includes(term)
     );
@@ -114,9 +130,14 @@ class UsersManager {
     }
 
     this.filteredUsers.sort((a, b) => {
-      let aVal, bVal;
-      
+      let aVal;
+      let bVal;
+
       switch (column) {
+        case 'index':
+          aVal = a.listIndex;
+          bVal = b.listIndex;
+          break;
         case 'name':
           aVal = a.name.toLowerCase();
           bVal = b.name.toLowerCase();
@@ -147,17 +168,18 @@ class UsersManager {
   }
 
   updateTableDisplay() {
-    const tbody = document.querySelector('.modern-table tbody');
+    const tbody = document.querySelector('.users-page-table .modern-table tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
     this.filteredUsers.forEach((user, index) => {
       const row = user.element.cloneNode(true);
-      row.querySelector('.number-badge').textContent = index + 1;
+      const rn = row.querySelector('.row-num');
+      if (rn) rn.textContent = String(index + 1);
       tbody.appendChild(row);
     });
 
-    // Re-attach event listeners
-    this.setupEventListeners();
+    this.updateSortIndicators();
   }
 
   updateSortIndicators() {
@@ -169,17 +191,28 @@ class UsersManager {
     });
   }
 
-  async handleStatusChange(selectElement) {
-    const userId = selectElement.id;
-    const newStatus = selectElement.value;
-    const row = selectElement.closest('.user-row');
-    
-    // Add loading state
-    selectElement.disabled = true;
-    selectElement.style.opacity = '0.6';
-    
+  syncToggleLabel(checkbox) {
+    const row = checkbox.closest('.user-row');
+    if (!row) return;
+    const label = row.querySelector('.toggle-label');
+    if (!label) return;
+    const on = checkbox.checked;
+    label.textContent = on ? 'Active' : 'Blocked';
+    label.classList.toggle('is-active', on);
+    label.classList.toggle('is-blocked', !on);
+  }
+
+  async handleStatusToggle(checkbox) {
+    const userId = checkbox.dataset.userId;
+    const newStatus = checkbox.checked ? 'ACTIVE' : 'BLOCK';
+    const row = checkbox.closest('.user-row');
+    const prevChecked = !checkbox.checked;
+
+    this.syncToggleLabel(checkbox);
+
+    checkbox.disabled = true;
+
     try {
-      // Make actual API call to update user status
       const response = await fetch('/admin/user/edit', {
         method: 'POST',
         headers: {
@@ -192,45 +225,54 @@ class UsersManager {
       });
 
       if (response.ok) {
-        // Update local data
         const user = this.users.find(u => u.id === userId);
         if (user) {
           user.status = newStatus;
+          const tpl = user.element;
+          if (tpl) {
+            tpl.dataset.memberStatus = newStatus;
+            const tt = tpl.querySelector('.member-status-toggle');
+            if (tt) tt.checked = newStatus === 'ACTIVE';
+            const lab = tpl.querySelector('.toggle-label');
+            if (lab) {
+              lab.textContent = newStatus === 'ACTIVE' ? 'Active' : 'Blocked';
+              lab.classList.toggle('is-active', newStatus === 'ACTIVE');
+              lab.classList.toggle('is-blocked', newStatus !== 'ACTIVE');
+            }
+          }
         }
-        
-        // Update UI
-        selectElement.disabled = false;
-        selectElement.style.opacity = '1';
-        
-        // Add success animation
-        row.style.background = 'rgba(0, 255, 0, 0.1)';
-        setTimeout(() => {
-          row.style.background = '';
-        }, 1000);
-        
+
+        checkbox.disabled = false;
+
+        if (row) {
+          row.style.background = 'rgba(29, 158, 117, 0.12)';
+          setTimeout(() => {
+            row.style.background = '';
+          }, 900);
+        }
+
         this.updateStats();
         this.showNotification(`User status updated to ${newStatus}`, 'success');
-        
-        // Reload page after successful status change to show updated data
+
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       } else {
-        // Revert the select value on error
-        selectElement.value = selectElement.dataset.previousValue || 'ACTIVE';
-        selectElement.disabled = false;
-        selectElement.style.opacity = '1';
-        
-        const errorData = await response.json();
-        this.showNotification(`Failed to update status: ${errorData.message || 'Unknown error'}`, 'error');
+        checkbox.checked = prevChecked;
+        this.syncToggleLabel(checkbox);
+        checkbox.disabled = false;
+        let msg = 'Unknown error';
+        try {
+          const errorData = await response.json();
+          msg = errorData.message || msg;
+        } catch (_) {}
+        this.showNotification(`Failed to update status: ${msg}`, 'error');
       }
     } catch (error) {
       console.error('Error updating user status:', error);
-      // Revert the select value on error
-      selectElement.value = selectElement.dataset.previousValue || 'ACTIVE';
-      selectElement.disabled = false;
-      selectElement.style.opacity = '1';
-      
+      checkbox.checked = prevChecked;
+      this.syncToggleLabel(checkbox);
+      checkbox.disabled = false;
       this.showNotification(`Failed to update status: ${error.message}`, 'error');
     }
   }
@@ -243,29 +285,40 @@ class UsersManager {
     const activeElement = document.getElementById('activeUsers');
     const blockedElement = document.getElementById('blockedUsers');
     const totalElement = document.getElementById('totalUsers');
+    const blockedDelta = document.getElementById('blockedUsersDelta');
 
     if (activeElement) this.animateNumber(activeElement, activeUsers);
     if (blockedElement) this.animateNumber(blockedElement, blockedUsers);
     if (totalElement) this.animateNumber(totalElement, totalUsers);
+
+    if (blockedDelta) {
+      if (blockedUsers > 0) {
+        blockedDelta.textContent = `${blockedUsers} currently blocked`;
+        blockedDelta.classList.add('is-warning');
+      } else {
+        blockedDelta.textContent = 'No blocks active';
+        blockedDelta.classList.remove('is-warning');
+      }
+    }
   }
 
   animateNumber(element, targetNumber) {
-    const startNumber = parseInt(element.textContent) || 0;
+    const startNumber = parseInt(element.textContent, 10) || 0;
     const duration = 1000;
     const startTime = performance.now();
 
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       const currentNumber = Math.round(startNumber + (targetNumber - startNumber) * progress);
       element.textContent = currentNumber;
-      
+
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
     };
-    
+
     requestAnimationFrame(animate);
   }
 
@@ -273,7 +326,6 @@ class UsersManager {
     const user = this.users.find(u => u.id === userId);
     if (user) {
       this.showNotification(`Viewing details for ${user.name}`, 'info');
-      // Here you would typically open a modal or navigate to user details
     }
   }
 
@@ -285,7 +337,6 @@ class UsersManager {
   }
 
   openEditUserModal(user) {
-    // Populate the form with user data
     document.getElementById('editUserName').value = user.name || '';
     document.getElementById('editUserPhone').value = user.phone || '';
     document.getElementById('editUserAddress').value = user.address || '';
@@ -293,17 +344,15 @@ class UsersManager {
     document.getElementById('editUserPoints').value = user.points || 0;
     document.getElementById('editUserStatus').value = user.status || 'ACTIVE';
 
-    // Store the user ID for the update
     document.getElementById('editUserForm').dataset.userId = user.id;
 
-    // Show the modal
     document.getElementById('editUserModal').style.display = 'block';
   }
 
   async updateUser(userId, formData) {
     try {
       this.showNotification('Updating user...', 'warning');
-      
+
       const response = await fetch('/admin/user/edit', {
         method: 'POST',
         headers: {
@@ -316,20 +365,7 @@ class UsersManager {
       });
 
       if (response.ok) {
-        const result = await response.json();
         this.showNotification('User updated successfully!', 'success');
-        
-        // Update the user in the local array
-        const userIndex = this.users.findIndex(u => u.id === userId);
-        if (userIndex !== -1) {
-          this.users[userIndex] = { ...this.users[userIndex], ...formData };
-        }
-        
-        // Refresh the table
-        this.updateTableDisplay();
-        this.closeEditUserModal();
-        
-        // Reload page to show updated data
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -353,7 +389,7 @@ class UsersManager {
     if (user && confirm(`Are you sure you want to delete ${user.name}?`)) {
       try {
         this.showNotification(`Deleting ${user.name}...`, 'warning');
-        
+
         const response = await fetch(`/admin/user/${userId}`, {
           method: 'DELETE',
           headers: {
@@ -363,7 +399,6 @@ class UsersManager {
 
         if (response.ok) {
           this.showNotification(`${user.name} deleted successfully!`, 'success');
-          // Reload the page to show updated data (same as products page)
           setTimeout(() => {
             window.location.reload();
           }, 1000);
@@ -376,7 +411,7 @@ class UsersManager {
         this.showNotification(`Failed to delete ${user.name}: ${error.message}`, 'error');
       }
     } else if (!user) {
-      this.showNotification(`User not found!`, 'error');
+      this.showNotification('User not found!', 'error');
     }
   }
 
@@ -389,8 +424,7 @@ class UsersManager {
         <span>${message}</span>
       </div>
     `;
-    
-    // Add notification styles
+
     notification.style.cssText = `
       position: fixed;
       top: 20px;
@@ -404,19 +438,17 @@ class UsersManager {
       transform: translateX(100%);
       transition: transform 0.3s ease;
     `;
-    
+
     document.body.appendChild(notification);
-    
-    // Animate in
+
     setTimeout(() => {
       notification.style.transform = 'translateX(0)';
     }, 100);
-    
-    // Auto remove
+
     setTimeout(() => {
       notification.style.transform = 'translateX(100%)';
       setTimeout(() => {
-        document.body.removeChild(notification);
+        if (notification.parentNode) notification.parentNode.removeChild(notification);
       }, 300);
     }, 3000);
   }
@@ -442,12 +474,11 @@ class UsersManager {
   }
 
   initializeAnimations() {
-    // Add entrance animations to elements
-    const elements = document.querySelectorAll('.stat-card, .user-row');
+    const elements = document.querySelectorAll('.admin-stats-grid--users .admin-stat, .user-row');
     elements.forEach((element, index) => {
       element.style.opacity = '0';
       element.style.transform = 'translateY(20px)';
-      
+
       setTimeout(() => {
         element.style.transition = 'all 0.6s ease';
         element.style.opacity = '1';
@@ -457,7 +488,6 @@ class UsersManager {
   }
 }
 
-// Global functions for onclick handlers
 function viewUser(userId) {
   if (window.usersManager) {
     window.usersManager.viewUser(userId);
@@ -478,36 +508,29 @@ function deleteUser(userId) {
   }
 }
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Initializing Enhanced Users Management...');
-  
-  // Only initialize if we're on the users page
   if (document.querySelector('.user-table-container')) {
     window.usersManager = new UsersManager();
-    console.log('Enhanced Users Management System ready!');
-    
-    // Add event listener for edit form submission
+
     const editForm = document.getElementById('editUserForm');
     if (editForm) {
       editForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         const userId = this.dataset.userId;
         const formData = {
           memberNick: document.getElementById('editUserName').value,
           memberPhone: document.getElementById('editUserPhone').value,
           memberAddress: document.getElementById('editUserAddress').value,
           memberDesc: document.getElementById('editUserDesc').value,
-          memberPoints: parseInt(document.getElementById('editUserPoints').value),
+          memberPoints: parseInt(document.getElementById('editUserPoints').value, 10),
           memberStatus: document.getElementById('editUserStatus').value
         };
-        
+
         window.usersManager.updateUser(userId, formData);
       });
     }
-    
-    // Close modal when clicking outside
+
     const modal = document.getElementById('editUserModal');
     if (modal) {
       modal.addEventListener('click', function(e) {
@@ -519,12 +542,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Global functions for modal control
 function closeEditUserModal() {
   if (window.usersManager) {
     window.usersManager.closeEditUserModal();
   }
 }
 
-// Export for external use
 window.UsersManager = UsersManager;

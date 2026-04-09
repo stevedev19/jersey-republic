@@ -4,15 +4,17 @@ console.log("Enhanced Home Page with Video Background initialized");
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Home page loaded successfully");
     
-    // Always initialize basic features
     initLiveClock();
-    initNotifications();
     
     // Only initialize admin features if admin is logged in
     if (isAdminLoggedIn()) {
         initDashboardStats();
         initQuickActions();
         initActivityFeed();
+        initAdminRevenueChart();
+        document.getElementById('adminDashboardRefreshBtn')?.addEventListener('click', function() {
+            fetchDashboardStats();
+        });
     }
 });
 
@@ -37,12 +39,13 @@ function initLiveClock() {
             second: '2-digit'
         });
         clockElement.textContent = timeString;
-        
-        // Add subtle animation
-        clockElement.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-            clockElement.style.transform = 'scale(1)';
-        }, 200);
+
+        if (!clockElement.closest('.admin-home-clock--dashboard')) {
+            clockElement.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                clockElement.style.transform = 'scale(1)';
+            }, 200);
+        }
     }
     
     updateClock();
@@ -63,11 +66,11 @@ function initDashboardStats() {
 }
 
 function showLoadingState() {
-    const elements = ['totalUsers', 'activeLogins', 'totalJerseys', 'totalRevenue', 'ordersToday'];
+    const elements = ['totalUsers', 'activeLogins', 'totalJerseys', 'lastActivity', 'inventoryRetailValue'];
     elements.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
-            element.textContent = '...';
+            element.textContent = id === 'lastActivity' ? '--:--' : id === 'inventoryRetailValue' ? '...' : '...';
             element.style.opacity = '0.6';
         }
     });
@@ -99,37 +102,82 @@ async function fetchDashboardStats() {
     }
 }
 
+function getDashboardWeekId() {
+    const d = new Date();
+    const day = d.getDay();
+    const monday = new Date(d);
+    monday.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+    monday.setHours(0, 0, 0, 0);
+    const y = monday.getFullYear();
+    const m = String(monday.getMonth() + 1).padStart(2, '0');
+    const da = String(monday.getDate()).padStart(2, '0');
+    return `${y}-${m}-${da}`;
+}
+
+function formatUsd(n) {
+    const v = Math.round(Number(n) || 0);
+    return '$' + v.toLocaleString('en-US');
+}
+
+function updateInventoryRetailDelta(current) {
+    const deltaEl = document.getElementById('inventoryRetailDelta');
+    if (!deltaEl) return;
+    const weekId = getDashboardWeekId();
+    const key = 'jrInvRetailWeek';
+    let snap = null;
+    try {
+        snap = JSON.parse(localStorage.getItem(key) || 'null');
+    } catch (_e) {
+        snap = null;
+    }
+    deltaEl.classList.remove('admin-stat-delta--up', 'admin-stat-delta--down');
+    if (!snap) {
+        deltaEl.textContent = 'Price × stock on hand';
+        localStorage.setItem(key, JSON.stringify({ weekId, value: current }));
+        return;
+    }
+    if (snap.weekId !== weekId) {
+        if (current > snap.value) {
+            deltaEl.textContent = '↑ Up from last week';
+            deltaEl.classList.add('admin-stat-delta--up');
+        } else if (current < snap.value) {
+            deltaEl.textContent = '↓ Down from last week';
+            deltaEl.classList.add('admin-stat-delta--down');
+        } else {
+            deltaEl.textContent = 'Flat vs last week';
+        }
+        localStorage.setItem(key, JSON.stringify({ weekId, value: current }));
+        return;
+    }
+    deltaEl.textContent = 'Price × stock on hand';
+    localStorage.setItem(key, JSON.stringify({ weekId, value: current }));
+}
+
 function updateDashboardStats(stats) {
     console.log('Updating dashboard stats:', stats);
     
-    // Update user statistics
     animateCounter('totalUsers', stats.users.total);
     animateCounter('activeLogins', stats.users.active);
-    
-    // Update product statistics
     animateCounter('totalJerseys', stats.products.total);
     
-    // Update order statistics
-    animateCounter('ordersToday', stats.orders.today);
-    
-    // Update revenue
-    animateCounter('totalRevenue', stats.revenue.total, '$');
-    
-    // Update last updated time
-    const lastUpdated = new Date(stats.lastUpdated);
-    const timeString = lastUpdated.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
-    
     const lastActivityElement = document.getElementById('lastActivity');
-    if (lastActivityElement) {
+    if (lastActivityElement && stats.lastUpdated) {
+        const lastUpdated = new Date(stats.lastUpdated);
+        const timeString = lastUpdated.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
         lastActivityElement.textContent = timeString;
     }
+
+    const retail = stats.inventory && typeof stats.inventory.retailValue === 'number'
+        ? stats.inventory.retailValue
+        : 0;
+    animateCounterCurrency('inventoryRetailValue', retail);
+    updateInventoryRetailDelta(retail);
     
-    // Remove loading state
-    const elements = ['totalUsers', 'activeLogins', 'totalJerseys', 'totalRevenue', 'ordersToday'];
+    const elements = ['totalUsers', 'activeLogins', 'totalJerseys', 'lastActivity', 'inventoryRetailValue'];
     elements.forEach(id => {
         const element = document.getElementById(id);
         if (element) {
@@ -139,14 +187,12 @@ function updateDashboardStats(stats) {
 }
 
 function loadFallbackStats() {
-    // Fallback to hardcoded values if API fails
     const fallbackStats = {
         users: { total: 156, active: 89 },
         products: { total: 24 },
-        orders: { today: 12 },
-        revenue: { total: 15420 }
+        inventory: { retailValue: 18420 },
+        lastUpdated: new Date().toISOString()
     };
-    
     updateDashboardStats(fallbackStats);
 }
 
@@ -169,6 +215,22 @@ function animateCounter(elementId, targetValue, prefix = '') {
             element.textContent = Math.floor(currentValue);
         }
     }, 30);
+}
+
+function animateCounterCurrency(elementId, targetValue) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    const target = Math.round(Number(targetValue) || 0);
+    let current = 0;
+    const increment = Math.max(1, target / 40);
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = formatUsd(Math.floor(current));
+    }, 25);
 }
 
 function updateLastActivity() {
@@ -198,30 +260,69 @@ function updateLastActivity() {
 
 // Quick Actions
 function initQuickActions() {
-    const actionButtons = document.querySelectorAll('.action-btn');
-    
-    actionButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
+    document.querySelectorAll('.admin-quick-link').forEach(button => {
+        button.addEventListener('click', function() {
+            this.style.transform = 'scale(0.98)';
             setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-            
+                this.style.transform = '';
+            }, 120);
         });
     });
 }
 
+function initAdminRevenueChart() {
+    const canvas = document.getElementById('adminRevenueChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const multipliers = [0.92, 0.78, 1.05, 0.88, 1.12, 0.95, 0.82];
+    const data = multipliers.map((m, i) =>
+        Math.round(80 + m * 220 + ((i * 13) % 28))
+    );
+    new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    data,
+                    backgroundColor: '#7c6f5e',
+                    borderRadius: 4,
+                    barThickness: 14,
+                    maxBarThickness: 18
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: {
+                        font: { size: 11, family: "'Inter', system-ui, sans-serif" },
+                        color: '#8c8982'
+                    }
+                },
+                y: {
+                    display: false,
+                    min: 0,
+                    grid: { display: false, drawBorder: false }
+                }
+            }
+        }
+    });
+}
 
 // Activity Feed with Real Data
 function initActivityFeed() {
-    // Show loading state
+    if (document.querySelector('.activity-list[data-static="true"]')) {
+        return;
+    }
     showActivityLoadingState();
-    
-    // Fetch real activity data
     fetchRecentActivity();
-    
-    // Set up auto-refresh every 60 seconds
     setInterval(fetchRecentActivity, 60000);
 }
 
