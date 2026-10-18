@@ -8,10 +8,8 @@ import orderController from "./controllers/order.controller";
 router.get("/member/restaurant",memberController.getRestaurant);
 router.post("/member/login", memberController.login);
 router.post("/member/signup", memberController.signup);
-router.post("/member/logout", 
-    memberController.verifyAuth,
-    memberController.logout
-);
+// No verifyAuth: logout must succeed even with an expired/missing token
+router.post("/member/logout", memberController.logout);
 router.get(
     "/member/detail", 
     memberController.verifyAuth,
